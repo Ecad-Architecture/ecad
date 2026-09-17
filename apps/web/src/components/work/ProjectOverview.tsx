@@ -6,7 +6,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { galleryCategories, type GalleryCategory, type ProjectDetail } from "./projectDetails";
+import { galleryCategories, type GalleryCategory, type ProjectDetail } from "./types";
 import { getProjectGalleryImages } from "./projectGallery";
 
 interface ProjectOverviewProps {
@@ -297,10 +297,10 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
               }`}
             >
               {visibleGalleryImages.map(({ galleryIndex, image }, slot) => (
-                <div key={slot} className={`relative overflow-hidden ${visibleImageCount === 1 ? "aspect-[16/10]" : "aspect-[0.77/1]"}`}>
+                <div key={image.key} className={`relative overflow-hidden ${visibleImageCount === 1 ? "aspect-[16/10]" : "aspect-[0.77/1]"}`}>
                 <button
                   type="button"
-                  aria-label={`Expand ${image.category.toLowerCase()} image ${galleryIndex + 1}`}
+                  aria-label={`Expand ${image.category.toLowerCase()} ${image.kind} ${galleryIndex + 1}`}
                   onClick={() => setActiveImageIndex(galleryIndex)}
                   onMouseEnter={() => setHoveredImage({ slot })}
                   onMouseLeave={() => setHoveredImage(null)}
@@ -345,10 +345,10 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
             >
               {galleryImages.map((image, galleryIndex) => (
                 <button
-                  key={`${image.category}-${image.src}-${galleryIndex}`}
+                  key={image.key}
                   data-gallery-index={galleryIndex}
                   type="button"
-                  aria-label={`Expand ${image.category.toLowerCase()} image ${galleryIndex + 1}`}
+                  aria-label={`Expand ${image.category.toLowerCase()} ${image.kind} ${galleryIndex + 1}`}
                   onClick={() => setActiveImageIndex(galleryIndex)}
                   onMouseEnter={() => setHoveredImage({ category: image.category })}
                   onMouseLeave={() => setHoveredImage(null)}
@@ -398,7 +398,7 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Expanded project image"
+          aria-label="Expanded project media"
           onClick={() => setActiveImageIndex(null)}
           className="fixed inset-0 z-[90] flex items-start justify-center overflow-y-auto bg-white/25 px-4 py-4 backdrop-blur-[3px] sm:px-8 lg:px-12"
         >
@@ -406,37 +406,64 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
             ref={expandedImageRef}
             className="relative max-w-[1500px] overflow-hidden"
             style={{
-              aspectRatio: imageRatios[activeImage.src] ?? 1.5,
-              width: `min(92vw, calc(88svh * ${imageRatios[activeImage.src] ?? 1.5}), 1500px)`,
+              aspectRatio:
+                imageRatios[activeImage.src] ??
+                (activeImage.kind === "video" ? 16 / 9 : 1.5),
+              width: `min(92vw, calc(88svh * ${imageRatios[activeImage.src] ?? (activeImage.kind === "video" ? 16 / 9 : 1.5)}), 1500px)`,
             }}
             onClick={(event) => event.stopPropagation()}
           >
-            <Image
-              key={activeImage.src}
-              src={activeImage.src}
-              alt={activeImage.alt}
-              fill
-              sizes="92vw"
-              className="object-contain object-center"
-              preload
-              onLoad={({ currentTarget }) => {
-                const ratio =
-                  currentTarget.naturalWidth / currentTarget.naturalHeight;
+            {activeImage.kind === "video" && activeImage.videoUrl ? (
+              <video
+                key={activeImage.videoUrl}
+                src={activeImage.videoUrl}
+                poster={activeImage.src}
+                controls
+                autoPlay
+                playsInline
+                aria-label={activeImage.alt}
+                className="size-full object-contain object-center"
+                onLoadedMetadata={({ currentTarget }) => {
+                  const ratio =
+                    currentTarget.videoWidth / currentTarget.videoHeight;
 
-                setImageRatios((currentRatios) =>
-                  currentRatios[activeImage.src] === ratio
-                    ? currentRatios
-                    : { ...currentRatios, [activeImage.src]: ratio },
-                );
-              }}
-            />
+                  if (Number.isFinite(ratio) && ratio > 0) {
+                    setImageRatios((currentRatios) =>
+                      currentRatios[activeImage.src] === ratio
+                        ? currentRatios
+                        : { ...currentRatios, [activeImage.src]: ratio },
+                    );
+                  }
+                }}
+              />
+            ) : (
+              <Image
+                key={activeImage.src}
+                src={activeImage.src}
+                alt={activeImage.alt}
+                fill
+                sizes="92vw"
+                className="object-contain object-center"
+                preload
+                onLoad={({ currentTarget }) => {
+                  const ratio =
+                    currentTarget.naturalWidth / currentTarget.naturalHeight;
+
+                  setImageRatios((currentRatios) =>
+                    currentRatios[activeImage.src] === ratio
+                      ? currentRatios
+                      : { ...currentRatios, [activeImage.src]: ratio },
+                  );
+                }}
+              />
+            )}
 
             {galleryImages.length > 1 && ([-1, 1] as const).map((direction) => (
               <button
                 key={direction}
                 type="button"
                 data-gallery-control
-                aria-label={direction === -1 ? "Show previous project image" : "Show next project image"}
+                aria-label={direction === -1 ? "Show previous project media" : "Show next project media"}
                 onClick={() => setActiveImageIndex((index) => index === null ? null : (index + direction + galleryImages.length) % galleryImages.length)}
                 className={`absolute top-1/2 z-10 -translate-y-1/2 rounded-full drop-shadow-md transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${direction === -1 ? "left-3 sm:left-5" : "right-3 sm:right-5"}`}
               >
@@ -455,7 +482,7 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
               type="button"
               data-gallery-control
               autoFocus
-              aria-label="Close expanded project image"
+              aria-label="Close expanded project media"
               onClick={() => setActiveImageIndex(null)}
               className="absolute right-3 top-3 z-10 rounded-full transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:right-5 sm:top-5"
             >

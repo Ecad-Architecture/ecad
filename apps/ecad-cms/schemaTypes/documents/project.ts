@@ -69,8 +69,8 @@ export const project = defineType({
       title: 'Year of completion',
       type: 'number',
       description:
-        'Enter the completion year. For in-progress or concept projects, use the expected completion year.',
-      validation: (rule) => rule.required().integer().min(1000).max(9999),
+        'Optional. For in-progress or concept projects, enter the expected completion year when known.',
+      validation: (rule) => rule.integer().min(1000).max(9999),
     }),
     defineField({
       name: 'plans',

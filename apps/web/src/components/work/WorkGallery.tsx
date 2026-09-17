@@ -16,17 +16,12 @@ import {
   useState,
 } from "react";
 
-import {
-  projectCategories,
-  type ProjectCategory,
-  workProjects,
-} from "./projects";
 import { useProjectTransition } from "./ProjectTransitionProvider";
+import type { WorkProject } from "./types";
 
-type ActiveCategory = ProjectCategory | "All";
+type ActiveCategory = string;
 type SortOrder = "featured" | "name-asc" | "name-desc";
 type ViewMode = "grid" | "curated";
-type WorkProject = (typeof workProjects)[number];
 
 interface SelectOption {
   label: string;
@@ -38,9 +33,6 @@ const PROJECTS_PER_SECTION = 5;
 const SECTIONS_PER_PAGE = 3;
 const CURATED_PROJECTS_PER_PAGE = PROJECTS_PER_SECTION * SECTIONS_PER_PAGE;
 const GRID_PROJECTS_PER_PAGE = 8;
-const projectLocations = Array.from(
-  new Set(workProjects.map((project) => project.location)),
-).sort((a, b) => a.localeCompare(b));
 
 function ViewIcon({ src }: { src: string }) {
   return (
@@ -500,7 +492,7 @@ function GridProjectCard({ project }: { project: WorkProject }) {
               {project.location}
             </p>
             <p className="wide-screen-body-sm mt-[clamp(1.2rem,2vw,2.25rem)] text-[clamp(0.9rem,1.2vw,1.15rem)] leading-none tracking-[-0.03em]">
-              2019
+              {project.year}
             </p>
           </div>
         </div>
@@ -509,7 +501,11 @@ function GridProjectCard({ project }: { project: WorkProject }) {
   );
 }
 
-export default function WorkGallery() {
+export default function WorkGallery({
+  projects,
+}: {
+  projects: readonly WorkProject[];
+}) {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [activeCategory, setActiveCategory] =
     useState<ActiveCategory>("All");
@@ -522,7 +518,7 @@ export default function WorkGallery() {
 
   const visibleProjects = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLocaleLowerCase();
-    const projects = workProjects.filter((project) => {
+    const matchingProjects = projects.filter((project) => {
       const matchesCategory =
         activeCategory === "All" || project.category === activeCategory;
       const matchesLocation =
@@ -542,15 +538,15 @@ export default function WorkGallery() {
     });
 
     if (sortOrder === "name-asc") {
-      return projects.sort((a, b) => a.title.localeCompare(b.title));
+      return matchingProjects.sort((a, b) => a.title.localeCompare(b.title));
     }
 
     if (sortOrder === "name-desc") {
-      return projects.sort((a, b) => b.title.localeCompare(a.title));
+      return matchingProjects.sort((a, b) => b.title.localeCompare(a.title));
     }
 
-    return projects;
-  }, [activeCategory, activeLocation, activeStatus, searchQuery, sortOrder]);
+    return matchingProjects;
+  }, [activeCategory, activeLocation, activeStatus, projects, searchQuery, sortOrder]);
 
   const projectsPerPage =
     viewMode === "grid"
@@ -605,11 +601,30 @@ export default function WorkGallery() {
     return () => window.clearInterval(timer);
   }, [rotationCycleLength, viewMode]);
 
+  const projectCategories = useMemo(
+    () =>
+      Array.from(new Set(projects.map((project) => project.category))).sort(
+        (a, b) => a.localeCompare(b),
+      ),
+    [projects],
+  );
+  const projectLocations = useMemo(
+    () =>
+      Array.from(new Set(projects.map((project) => project.location))).sort(
+        (a, b) => a.localeCompare(b),
+      ),
+    [projects],
+  );
+  const projectStatuses = useMemo(
+    () =>
+      Array.from(new Set(projects.map((project) => project.status))).sort(
+        (a, b) => a.localeCompare(b),
+      ),
+    [projects],
+  );
   const typologyOptions: SelectOption[] = [
     { label: "Typology", value: "All" },
-    ...projectCategories
-      .filter((category) => category !== "All")
-      .map((category) => ({ label: category, value: category })),
+    ...projectCategories.map((category) => ({ label: category, value: category })),
   ];
   const locationOptions: SelectOption[] = [
     { label: "Location", value: "all" },
@@ -737,7 +752,10 @@ export default function WorkGallery() {
             }}
             options={[
               { label: "Status", value: "all" },
-              { label: "Completed", value: "completed" },
+              ...projectStatuses.map((status) => ({
+                label: status,
+                value: status.toLocaleLowerCase(),
+              })),
             ]}
           />
           <WorkSelect

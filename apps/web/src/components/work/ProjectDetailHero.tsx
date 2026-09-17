@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import type { ProjectDetail } from "./projectDetails";
+import type { ProjectDetail } from "./types";
 
 interface ProjectDetailHeroProps {
   project: ProjectDetail;
@@ -18,14 +18,28 @@ export default function ProjectDetailHero({
         data-project-hero={project.slug}
         className="absolute inset-0 overflow-hidden"
       >
-        <Image
-          src={project.heroSrc}
-          alt={project.heroAlt}
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-          preload
-        />
+        {project.heroVideoUrl ? (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={project.heroSrc}
+            aria-label={project.heroAlt}
+            className="size-full object-cover object-center"
+          >
+            <source src={project.heroVideoUrl} />
+          </video>
+        ) : (
+          <Image
+            src={project.heroSrc}
+            alt={project.heroAlt}
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+            preload
+          />
+        )}
       </div>
 
       <div

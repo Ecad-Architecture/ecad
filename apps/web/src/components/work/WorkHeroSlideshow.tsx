@@ -7,30 +7,39 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
 
-import { workProjects } from "./projects";
 import { useProjectTransition } from "./ProjectTransitionProvider";
+import type { WorkProject } from "./types";
 
 const SLIDE_DURATION = 5500;
 
-export default function WorkHeroSlideshow() {
+export default function WorkHeroSlideshow({
+  projects,
+}: {
+  projects: readonly WorkProject[];
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const imageFrameRef = useRef<HTMLDivElement>(null);
   const { startProjectTransition } = useProjectTransition();
-  const project = workProjects[currentIndex];
-  const href = `/work/${project.slug}`;
+  const project = projects[currentIndex % Math.max(1, projects.length)];
 
   useEffect(() => {
-    if (isPaused || shouldReduceMotion || workProjects.length < 2) {
+    if (isPaused || shouldReduceMotion || projects.length < 2) {
       return;
     }
 
     const timer = window.setInterval(() => {
-      setCurrentIndex((index) => (index + 1) % workProjects.length);
+      setCurrentIndex((index) => (index + 1) % projects.length);
     }, SLIDE_DURATION);
 
     return () => window.clearInterval(timer);
-  }, [isPaused]);
+  }, [isPaused, projects.length]);
+
+  if (!project) {
+    return null;
+  }
+
+  const href = `/work/${project.slug}`;
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (!imageFrameRef.current) {

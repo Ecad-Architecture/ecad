@@ -88,8 +88,8 @@ export const teamMember = defineType({
       type: 'number',
       group: 'employment',
       description:
-        'The four-digit year the person started at ECAD. This is kept for company records and may be shown in their current profile.',
-      validation: (rule) => rule.required().integer().min(1900).max(new Date().getFullYear()),
+        'Optional. The four-digit year the person started at ECAD, when known.',
+      validation: (rule) => rule.integer().min(1900).max(new Date().getFullYear()),
     }),
     defineField({
       name: 'endYear',
@@ -97,15 +97,14 @@ export const teamMember = defineType({
       type: 'number',
       group: 'employment',
       description:
-        'The four-digit year the person left ECAD. This is required for former members and kept for company records, even if the public list shows only their name.',
+        'Optional. The four-digit year the person left ECAD, when known.',
       hidden: ({document}) => document?.membershipStatus !== 'former',
       validation: (rule) =>
         rule.custom((endYear, context) => {
           const document = context.document as
             {membershipStatus?: string; startYear?: number} | undefined
 
-          if (document?.membershipStatus !== 'former') return true
-          if (!endYear) return 'End year is required for former team members'
+          if (document?.membershipStatus !== 'former' || endYear == null) return true
           if (!Number.isInteger(endYear)) return 'End year must be a whole four-digit year'
           if (endYear < 1900 || endYear > new Date().getFullYear()) {
             return `End year must be between 1900 and ${new Date().getFullYear()}`

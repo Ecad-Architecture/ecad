@@ -6,23 +6,25 @@ import ProjectNavigation from "@/components/work/ProjectNavigation";
 import ProjectOverview from "@/components/work/ProjectOverview";
 import { ProjectDetailTransition } from "@/components/work/WorkPageTransition";
 import {
-  getProjectDetail,
-  projectDetails,
-} from "@/components/work/projectDetails";
+  getWorkProject,
+  getWorkProjectMetadata,
+  getWorkProjects,
+  getWorkProjectSlugs,
+} from "@/sanity/data/projects";
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export function generateStaticParams() {
-  return projectDetails.map(({ slug }) => ({ slug }));
+  return getWorkProjectSlugs();
 }
 
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectDetail(slug);
+  const project = await getWorkProjectMetadata(slug);
 
   if (!project) {
     return {};
@@ -36,17 +38,24 @@ export async function generateMetadata({
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = getProjectDetail(slug);
+  const [project, projects] = await Promise.all([
+    getWorkProject(slug),
+    getWorkProjects(),
+  ]);
 
   if (!project) {
     notFound();
   }
 
+  const relatedProjects = projects.filter(
+    (candidate) => candidate.slug !== project.slug,
+  );
+
   return (
     <ProjectDetailTransition slug={slug}>
       <ProjectDetailHero project={project} />
       <ProjectOverview project={project} />
-      <ProjectNavigation project={project} />
+      <ProjectNavigation projects={relatedProjects} />
     </ProjectDetailTransition>
   );
 }

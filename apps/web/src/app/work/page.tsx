@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import WorkGallery from "@/components/work/WorkGallery";
 import WorkHeroSlideshow from "@/components/work/WorkHeroSlideshow";
 import { WorkIndexTransition } from "@/components/work/WorkPageTransition";
+import { getWorkProjects } from "@/sanity/data/projects";
 
 export const metadata: Metadata = {
   title: "Our Work | ECAD Architects",
@@ -10,12 +11,14 @@ export const metadata: Metadata = {
     "Explore ECAD Architects' residential, commercial, industrial, mixed-use, and interior projects.",
 };
 
-export default function WorkPage() {
+export default async function WorkPage() {
+  const projects = await getWorkProjects();
+
   return (
     <WorkIndexTransition>
-      <WorkHeroSlideshow />
+      <WorkHeroSlideshow projects={projects} />
 
-      <WorkGallery />
+      <WorkGallery projects={projects} />
     </WorkIndexTransition>
   );
 }

@@ -5,15 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type MouseEvent, useRef, useState } from "react";
 
-import type { ProjectDetail } from "./projectDetails";
 import { useProjectTransition } from "./ProjectTransitionProvider";
-import { workProjects } from "./projects";
+import type { WorkProject } from "./types";
 
 interface ProjectNavigationProps {
-  project: ProjectDetail;
+  projects: readonly WorkProject[];
 }
-
-type WorkProject = (typeof workProjects)[number];
 
 const PROJECTS_PER_PAGE = 4;
 
@@ -88,18 +85,15 @@ function RelatedProjectCard({ project }: { project: WorkProject }) {
 }
 
 export default function ProjectNavigation({
-  project,
+  projects,
 }: ProjectNavigationProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const relatedProjects = workProjects.filter(
-    (candidate) => candidate.slug !== project.slug,
-  );
   const totalPages = Math.max(
     1,
-    Math.ceil(relatedProjects.length / PROJECTS_PER_PAGE),
+    Math.ceil(projects.length / PROJECTS_PER_PAGE),
   );
-  const visibleProjects = relatedProjects.slice(
+  const visibleProjects = projects.slice(
     (currentPage - 1) * PROJECTS_PER_PAGE,
     currentPage * PROJECTS_PER_PAGE,
   );
