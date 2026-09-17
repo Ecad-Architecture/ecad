@@ -7,6 +7,15 @@ export const project = defineType({
   description: 'Create and manage portfolio projects.',
   type: 'document',
   icon: ImagesIcon,
+  fieldsets: [
+    {
+      name: 'projectGalleries',
+      title: 'Project galleries',
+      description:
+        'Add media to any of these optional galleries. Galleries without media will be unavailable on the website.',
+      options: {collapsible: true, collapsed: false},
+    },
+  ],
   fields: [
     defineField({
       name: 'heroMedia',
@@ -64,13 +73,53 @@ export const project = defineType({
       validation: (rule) => rule.required().integer().min(1000).max(9999),
     }),
     defineField({
-      name: 'gallery',
+      name: 'plans',
+      title: 'Plans',
       type: 'array',
+      description: 'Optional plans, drawings, diagrams, or related project media.',
+      fieldset: 'projectGalleries',
       of: [
         defineArrayMember({type: 'contentImage'}),
         defineArrayMember({type: 'contentVideo'}),
       ],
-      validation: (rule) => rule.required().min(1),
+    }),
+    defineField({
+      name: 'renders',
+      title: 'Renders',
+      type: 'array',
+      description: 'Optional architectural renders and visualisations.',
+      fieldset: 'projectGalleries',
+      of: [
+        defineArrayMember({type: 'contentImage'}),
+        defineArrayMember({type: 'contentVideo'}),
+      ],
+    }),
+    defineField({
+      name: 'media',
+      title: 'Media',
+      type: 'array',
+      description: 'Optional project photography, press imagery, or videos.',
+      fieldset: 'projectGalleries',
+      of: [
+        defineArrayMember({type: 'contentImage'}),
+        defineArrayMember({type: 'contentVideo'}),
+      ],
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Gallery (deprecated)',
+      type: 'array',
+      description: 'Existing gallery content retained for backwards compatibility.',
+      of: [
+        defineArrayMember({type: 'contentImage'}),
+        defineArrayMember({type: 'contentVideo'}),
+      ],
+      deprecated: {
+        reason: 'Use the Plans, Renders, and Media galleries instead.',
+      },
+      readOnly: true,
+      hidden: ({value}) => value === undefined,
+      initialValue: undefined,
     }),
   ],
   preview: {
