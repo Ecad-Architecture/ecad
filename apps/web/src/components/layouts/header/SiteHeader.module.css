@@ -1,0 +1,32 @@
+.navbar nav a {
+  font-family: var(--font-sohne-breit), var(--font-sohne), Arial, Helvetica,
+    sans-serif;
+}
+
+.homeFrostedBackdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 30%) 0%,
+    rgb(255 255 255 / 12%) 52%,
+    transparent 100%
+  );
+  -webkit-backdrop-filter: blur(6px) saturate(1.2);
+  backdrop-filter: blur(6px) saturate(1.2);
+}
+
+@media (min-width: 120rem) {
+  .homeFrostedBackdrop {
+    background: linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 44%) 0%,
+      rgb(255 255 255 / 20%) 42%,
+      rgb(255 255 255 / 5%) 78%,
+      transparent 100%
+    );
+    -webkit-backdrop-filter: blur(10px) saturate(1.15);
+    backdrop-filter: blur(10px) saturate(1.15);
+  }
+}

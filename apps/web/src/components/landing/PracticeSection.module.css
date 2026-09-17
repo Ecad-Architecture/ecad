@@ -1,0 +1,94 @@
+.section {
+  --practice-footer-height: 0px;
+}
+
+@media (min-width: 64rem) {
+  .section {
+    --practice-available-height: calc(100svh - var(--practice-footer-height));
+    height: var(--practice-available-height);
+    min-height: 0;
+    /* Use spare height for spacing before shrinking the gallery. */
+    padding-block: clamp(
+      0px,
+      calc((var(--practice-available-height) - min(74.5svh, 620px)) / 2),
+      5rem
+    );
+  }
+
+  .section .gallery {
+    height: min(74.5svh, 620px, 100%);
+    min-height: 0;
+  }
+}
+
+.label {
+  --corner-radius: 8px;
+  position: absolute;
+  z-index: 20;
+  background: #fff;
+}
+
+/* Reverse corners join the inset labels to the outer edges of the image. */
+.label::before,
+.label::after {
+  content: "";
+  position: absolute;
+  width: var(--corner-radius);
+  height: var(--corner-radius);
+  pointer-events: none;
+}
+
+.title {
+  /* Cover fractional pixels at the outer edges without moving the text. */
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-bottom-right-radius: var(--corner-radius);
+}
+
+.title::before,
+.title::after {
+  background: radial-gradient(
+    circle at bottom right,
+    transparent calc(var(--corner-radius) - 0.5px),
+    #fff var(--corner-radius)
+  );
+}
+
+.title::before {
+  top: 0;
+  left: 100%;
+}
+
+.title::after {
+  top: 100%;
+  left: 0;
+}
+
+.categories {
+  right: -1px;
+  bottom: -1px;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  border-top-left-radius: var(--corner-radius);
+}
+
+.categories::before,
+.categories::after {
+  background: radial-gradient(
+    circle at top left,
+    transparent calc(var(--corner-radius) - 0.5px),
+    #fff var(--corner-radius)
+  );
+}
+
+.categories::before {
+  right: 0;
+  bottom: 100%;
+}
+
+.categories::after {
+  right: 100%;
+  bottom: 0;
+}
