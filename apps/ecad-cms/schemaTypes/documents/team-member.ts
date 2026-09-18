@@ -15,12 +15,19 @@ export const teamMember = defineType({
   ],
   fields: [
     defineField({
-      name: 'name',
-      title: 'Full name',
+      name: 'firstName',
+      title: 'First name',
       type: 'string',
       group: 'profile',
-      description:
-        'The person’s name as it should appear on their team card or in the former-team list.',
+      description: 'The person’s first name.',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'surname',
+      title: 'Surname',
+      type: 'string',
+      group: 'profile',
+      description: 'The person’s surname (last name).',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -46,7 +53,8 @@ export const teamMember = defineType({
       type: 'string',
       group: 'profile',
       description:
-        'The person’s job title, shown when a visitor opens a current team member’s profile. This is optional for former members.',
+        'The person’s job title, shown when a visitor opens a current team member’s profile.',
+      hidden: ({document}) => document?.membershipStatus === 'former',
       validation: (rule) =>
         rule.custom((role, context) =>
           context.document?.membershipStatus === 'current' && !role
@@ -59,8 +67,8 @@ export const teamMember = defineType({
       title: 'Profile image',
       type: 'contentImage',
       group: 'profile',
-      description:
-        'The image used on the current-team card and in the opened profile. It is optional for former members because only their name is shown publicly.',
+      description: 'The image used on the current-team card and in the opened profile.',
+      hidden: ({document}) => document?.membershipStatus === 'former',
       validation: (rule) =>
         rule.custom((portrait, context) =>
           context.document?.membershipStatus === 'current' && !portrait
@@ -73,8 +81,8 @@ export const teamMember = defineType({
       title: 'Profile / biography',
       type: 'richText',
       group: 'profile',
-      description:
-        'The short profile shown when a visitor opens a current team member’s card. This is optional for former members.',
+      description: 'The short profile shown when a visitor opens a current team member’s card.',
+      hidden: ({document}) => document?.membershipStatus === 'former',
       validation: (rule) =>
         rule.custom((biography, context) =>
           context.document?.membershipStatus === 'current' && !biography
@@ -87,24 +95,35 @@ export const teamMember = defineType({
       title: 'Start year',
       type: 'number',
       group: 'employment',
-      description:
-        'Optional. The four-digit year the person started at ECAD, when known.',
-      validation: (rule) => rule.integer().min(1900).max(new Date().getFullYear()),
+      description: 'The four-digit year the person started at ECAD.',
+      validation: (rule) =>
+        rule.custom((startYear, context) => {
+          if (context.document?.membershipStatus === 'former' && !startYear) {
+            return 'Start year is required for former team members'
+          }
+          if (startYear !== undefined) {
+            if (!Number.isInteger(startYear)) return 'Start year must be a whole four-digit year'
+            if (startYear < 1900 || startYear > new Date().getFullYear()) {
+              return `Start year must be between 1900 and ${new Date().getFullYear()}`
+            }
+          }
+          return true
+        }),
     }),
     defineField({
       name: 'endYear',
       title: 'End year',
       type: 'number',
       group: 'employment',
-      description:
-        'Optional. The four-digit year the person left ECAD, when known.',
+      description: 'The four-digit year the person left ECAD.',
       hidden: ({document}) => document?.membershipStatus !== 'former',
       validation: (rule) =>
         rule.custom((endYear, context) => {
           const document = context.document as
             {membershipStatus?: string; startYear?: number} | undefined
 
-          if (document?.membershipStatus !== 'former' || endYear == null) return true
+          if (document?.membershipStatus !== 'former') return true
+          if (!endYear) return 'End year is required for former team members'
           if (!Number.isInteger(endYear)) return 'End year must be a whole four-digit year'
           if (endYear < 1900 || endYear > new Date().getFullYear()) {
             return `End year must be between 1900 and ${new Date().getFullYear()}`
@@ -144,11 +163,21 @@ export const teamMember = defineType({
   ],
   orderings: [{title: 'Display order', name: 'orderAsc', by: [{field: 'order', direction: 'asc'}]}],
   preview: {
-    select: {title: 'name', role: 'role', status: 'membershipStatus', media: 'portrait.asset'},
-    prepare: ({title, role, status, media}) => ({
-      title,
+    select: {
+      firstName: 'firstName',
+      surname: 'surname',
+      role: 'role',
+      status: 'membershipStatus',
+      media: 'portrait.asset',
+      startYear: 'startYear',
+      endYear: 'endYear',
+    },
+    prepare: ({firstName, surname, role, status, media, startYear, endYear}) => ({
+      title: `${firstName || ''} ${surname || ''}`.trim(),
       subtitle:
-        status === 'former' ? 'Former team member' : `${role || 'Role not set'} · Current team`,
+        status === 'former'
+          ? `Former team member (${startYear || '?'} - ${endYear || '?'})`
+          : `${role || 'Role not set'} · Current team`,
       media,
     }),
   },
