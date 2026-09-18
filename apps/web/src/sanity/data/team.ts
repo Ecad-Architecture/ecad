@@ -67,6 +67,22 @@ export const getTeamMembers = cache(async () => {
 });
 
 export interface TeamPageData {
+  title: string;
+  heroUrl: string;
+  heroAlt: string;
+  callToAction: {
+    title: string;
+    description: string;
+    label: string;
+    href: string;
+    backgroundUrl: string;
+    backgroundAlt: string;
+    insetUrl: string;
+    insetAlt: string;
+  };
+}
+
+interface RawTeamPageData {
   title?: string | null;
   heroUrl?: string | null;
   heroAlt?: string | null;
@@ -82,10 +98,25 @@ export interface TeamPageData {
   } | null;
 }
 
-export const getTeamPageData = cache(async () => {
-  const data = await sanityFetch<TeamPageData>({
+export const getTeamPageData = cache(async (): Promise<TeamPageData> => {
+  const data = await sanityFetch<RawTeamPageData | null>({
     query: TEAM_PAGE_QUERY,
     tags: ["teamPage"],
   });
-  return data;
+
+  return {
+    title: data?.title || "",
+    heroUrl: data?.heroUrl || "",
+    heroAlt: data?.heroAlt || "",
+    callToAction: {
+      title: data?.callToAction?.title || "",
+      description: data?.callToAction?.description || "",
+      label: data?.callToAction?.label || "",
+      href: data?.callToAction?.href || "",
+      backgroundUrl: data?.callToAction?.backgroundUrl || "",
+      backgroundAlt: data?.callToAction?.backgroundAlt || "",
+      insetUrl: data?.callToAction?.insetUrl || "",
+      insetAlt: data?.callToAction?.insetAlt || "",
+    },
+  };
 });

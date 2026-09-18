@@ -16,7 +16,8 @@ export const contentImage = defineType({
       name: 'alt',
       title: 'Alternative text',
       type: 'string',
-      description: 'Optionally describe the image for people using screen readers.',
+      description: 'Describe the image for people using screen readers. This is required for accessibility and SEO.',
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'caption',

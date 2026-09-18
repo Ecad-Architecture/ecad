@@ -24,10 +24,10 @@ export default async function TeamPage() {
         className="wide-screen-gutter px-[clamp(1.25rem,6.8vw,7rem)] pt-[clamp(2.5rem,7.5vw,8.1rem)]"
       >
         <div className="relative aspect-[2.34/1] w-full overflow-hidden bg-[#d8d5ce]">
-          {pageData?.heroUrl && (
+          {pageData.heroUrl && (
             <Image
               src={pageData.heroUrl}
-              alt={pageData.heroAlt || "Team Hero Image"}
+              alt={pageData.heroAlt}
               fill
               sizes="100vw"
               className="object-cover object-center"
@@ -50,25 +50,34 @@ export default async function TeamPage() {
           }}
         />
         <div className="relative z-10">
-          <StaffGrid currentMembers={currentMembers} formerMembers={formerMembers} />
+          <StaffGrid
+            currentMembers={currentMembers}
+            formerMembers={formerMembers}
+          />
           <ClosingCallout
-            title={pageData?.callToAction?.title || ""}
-            description={pageData?.callToAction?.description || ""}
-            linkLabel={pageData?.callToAction?.label || ""}
-            href={pageData?.callToAction?.href || "#"}
+            title={pageData.callToAction.title}
+            description={pageData.callToAction.description}
+            linkLabel={pageData.callToAction.label}
+            href={pageData.callToAction.href}
             backgroundImage={
-              pageData?.callToAction?.backgroundUrl
-                ? { src: pageData.callToAction.backgroundUrl, alt: pageData.callToAction.backgroundAlt || "" }
+              pageData.callToAction.backgroundUrl
+                ? {
+                    src: pageData.callToAction.backgroundUrl,
+                    alt: pageData.callToAction.backgroundAlt,
+                  }
                 : undefined
             }
             insetImage={
-              pageData?.callToAction?.insetUrl
-                ? { src: pageData.callToAction.insetUrl, alt: pageData.callToAction.insetAlt || "" }
+              pageData.callToAction.insetUrl
+                ? {
+                    src: pageData.callToAction.insetUrl,
+                    alt: pageData.callToAction.insetAlt,
+                  }
                 : undefined
             }
             tone="dark"
             contentTone="dark"
-            className="!bg-transparent !pt-0"
+            className="bg-transparent! pt-0!"
           />
         </div>
       </div>
