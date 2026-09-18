@@ -6,7 +6,7 @@ import StaffGrid from "@/components/team/StaffGrid";
 import { getTeamMembers, getTeamPageData } from "@/sanity/data/team";
 
 export const metadata: Metadata = {
-  title: "Team | ECAD Architects",
+  title: "Team",
   description:
     "Meet the people whose experience, curiosity, and collaboration shape ECAD Architects.",
 };

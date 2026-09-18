@@ -6,7 +6,7 @@ import { WorkIndexTransition } from "@/components/work/WorkPageTransition";
 import { getWorkProjects } from "@/sanity/data/projects";
 
 export const metadata: Metadata = {
-  title: "Our Work | ECAD Architects",
+  title: "Our Work",
   description:
     "Explore ECAD Architects' residential, commercial, industrial, mixed-use, and interior projects.",
 };
