@@ -24,6 +24,13 @@ export const project = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'featured',
+      title: 'Featured Project',
+      type: 'boolean',
+      description: 'Turn this on to display the project on the landing page carousel.',
+      initialValue: false,
+    }),
+    defineField({
       name: 'title',
       title: 'Project name',
       type: 'string',
