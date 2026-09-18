@@ -16,6 +16,7 @@ import {
   WORK_PROJECT_QUERY,
   WORK_PROJECT_SLUGS_QUERY,
   WORK_PROJECTS_QUERY,
+  HOME_FEATURED_PROJECTS_QUERY,
 } from "@/sanity/queries/projects";
 
 interface SanityContentImage {
@@ -170,6 +171,18 @@ function toProjectDetail(project: SanityProjectRecord): ProjectDetail | null {
 export const getWorkProjects = cache(async () => {
   const projects = await sanityFetch<SanityProjectRecord[]>({
     query: WORK_PROJECTS_QUERY,
+    tags: ["project", "topology"],
+  });
+
+  return projects.flatMap((project) => {
+    const mappedProject = toWorkProject(project);
+    return mappedProject ? [mappedProject] : [];
+  });
+});
+
+export const getFeaturedProjects = cache(async () => {
+  const projects = await sanityFetch<SanityProjectRecord[]>({
+    query: HOME_FEATURED_PROJECTS_QUERY,
     tags: ["project", "topology"],
   });
 

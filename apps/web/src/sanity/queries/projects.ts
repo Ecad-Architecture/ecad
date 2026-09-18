@@ -76,3 +76,10 @@ export const WORK_PROJECT_SLUGS_QUERY = defineQuery(/* groq */ `
     "slug": slug.current
   }
 `);
+
+export const HOME_FEATURED_PROJECTS_QUERY = defineQuery(/* groq */ `
+  *[_type == "project" && featured == true && defined(slug.current)]
+  | order(_createdAt asc, title asc){
+    ${projectCardFields}
+  }
+`);
