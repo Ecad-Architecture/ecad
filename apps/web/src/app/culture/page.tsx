@@ -7,7 +7,7 @@ import ClosingCallout from "@/components/shared/ClosingCallout";
 import { getAboutPageData } from "@/sanity/data/about";
 
 export const metadata: Metadata = {
-  title: "Culture | ECAD Architects",
+  title: "Culture",
   description:
     "Discover the culture, people, and values behind ECAD Architects.",
 };

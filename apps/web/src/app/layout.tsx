@@ -75,8 +75,48 @@ const sohneBreit = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ECAD Architects",
+  metadataBase: new URL("https://ecadarchitects.com"),
+  title: {
+    default: "ECAD Architects",
+    template: "%s | ECAD Architects",
+  },
   description: "Architecture shaped by context, purpose, and people.",
+  keywords: ["Architecture", "Design", "Master Planning", "Urban Design", "ECAD", "Architects", "Nigeria", "Africa"],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://ecadarchitects.com",
+    siteName: "ECAD Architects",
+    title: "ECAD Architects",
+    description: "Architecture shaped by context, purpose, and people.",
+    images: [
+      {
+        url: "/ecad-full-logo-dark.svg",
+        width: 1200,
+        height: 630,
+        alt: "ECAD Architects Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ECAD Architects",
+    description: "Architecture shaped by context, purpose, and people.",
+    images: ["/ecad-full-logo-dark.svg"],
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "ECAD Architects",
+  url: "https://ecadarchitects.com",
+  logo: "https://ecadarchitects.com/ecad-full-logo-dark.svg",
+  description: "Architecture shaped by context, purpose, and people.",
+  sameAs: [
+    "https://www.instagram.com/ecadarchitects/", // Add correct social links if available, using placeholders for now if not known, but the client might have them in the footer.
+    "https://www.linkedin.com/company/ecadarchitects/"
+  ]
 };
 
 export default function RootLayout({
@@ -93,6 +133,10 @@ export default function RootLayout({
     >
       <head>
         {/* <script dangerouslySetInnerHTML={{ __html: introPreflightScript }} /> */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body id="top" className="min-h-full bg-[#111111]">
         <CursorFollower />

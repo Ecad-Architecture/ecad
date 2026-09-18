@@ -4,7 +4,7 @@ import Image from "next/image";
 import ContactForms from "@/components/contact/ContactForms";
 
 export const metadata: Metadata = {
-  title: "Contact | ECAD Architects",
+  title: "Contact",
   description:
     "Start a project with ECAD Architects or explore opportunities to join the practice.",
 };
