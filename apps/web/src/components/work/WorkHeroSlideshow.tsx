@@ -19,21 +19,43 @@ export default function WorkHeroSlideshow({
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [shuffledProjects, setShuffledProjects] = useState<readonly WorkProject[]>(projects);
   const imageFrameRef = useRef<HTMLDivElement>(null);
   const { startProjectTransition } = useProjectTransition();
-  const project = projects[currentIndex % Math.max(1, projects.length)];
+  
+  useEffect(() => {
+    if (shuffledProjects !== projects) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const shuffle = (array: readonly WorkProject[]) => {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      };
+      setShuffledProjects(shuffle(projects));
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [projects, shuffledProjects]);
+
+  const project = shuffledProjects[currentIndex % Math.max(1, shuffledProjects.length)];
 
   useEffect(() => {
-    if (isPaused || shouldReduceMotion || projects.length < 2) {
+    if (isPaused || shouldReduceMotion || shuffledProjects.length < 2) {
       return;
     }
 
     const timer = window.setInterval(() => {
-      setCurrentIndex((index) => (index + 1) % projects.length);
+      setCurrentIndex((index) => (index + 1) % shuffledProjects.length);
     }, SLIDE_DURATION);
 
     return () => window.clearInterval(timer);
-  }, [isPaused, projects.length]);
+  }, [isPaused, shuffledProjects.length]);
 
   if (!project) {
     return null;

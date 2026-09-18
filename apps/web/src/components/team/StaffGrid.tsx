@@ -5,103 +5,84 @@ import { REDUCE_SITE_MOTION as shouldReduceMotion } from "@/motion";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import type { CurrentTeamMember, FormerTeamMember } from "@/sanity/data/team";
 
 import styles from "./StaffGrid.module.css";
 
-const staffNames = [
-  ["Amara", "Okafor"],
-  ["Daniel", "Adebayo"],
-  ["Ifeoma", "Nwosu"],
-  ["Tunde", "Balogun"],
-  ["Zainab", "Bello"],
-  ["Chinedu", "Eze"],
-  ["Maya", "Chen"],
-  ["Samuel", "Hart"],
-  ["Kwame", "Mensah"],
-  ["Leila", "Haddad"],
-  ["Sofia", "Marin"],
-  ["Noah", "Williams"],
-  ["Adaeze", "Obi"],
-  ["Femi", "Ogunleye"],
-  ["Nneka", "Umeh"],
-  ["Emeka", "Okoro"],
-  ["Amina", "Yusuf"],
-  ["David", "Cole"],
-  ["Lara", "Mensah"],
-  ["Kunle", "Adeyemi"],
-  ["Chioma", "Ibekwe"],
-  ["Omar", "Farouk"],
-  ["Grace", "Etim"],
-  ["Nathan", "Brooks"],
-  ["Yewande", "Ajayi"],
-  ["Kelechi", "Onuoha"],
-  ["Mariam", "Sule"],
-  ["Ethan", "Reed"],
-  ["Ivy", "Zhang"],
-  ["Nabil", "Hassan"],
-  ["Bukola", "Thomas"],
-  ["Jordan", "Lee"],
-  ["Ayo", "Bankole"],
-  ["Sara", "Patel"],
-  ["Michael", "Stone"],
-  ["Halima", "Garba"],
-] as const;
+// const staffNames = [
+//   ["Amara", "Okafor"],
+//   ["Daniel", "Adebayo"],
+//   ["Ifeoma", "Nwosu"],
+//   ["Tunde", "Balogun"],
+//   ["Zainab", "Bello"],
+//   ["Chinedu", "Eze"],
+//   ["Maya", "Chen"],
+//   ["Samuel", "Hart"],
+//   ["Kwame", "Mensah"],
+//   ["Leila", "Haddad"],
+//   ["Sofia", "Marin"],
+//   ["Noah", "Williams"],
+//   ["Adaeze", "Obi"],
+//   ["Femi", "Ogunleye"],
+//   ["Nneka", "Umeh"],
+//   ["Emeka", "Okoro"],
+//   ["Amina", "Yusuf"],
+//   ["David", "Cole"],
+//   ["Lara", "Mensah"],
+//   ["Kunle", "Adeyemi"],
+//   ["Chioma", "Ibekwe"],
+//   ["Omar", "Farouk"],
+//   ["Grace", "Etim"],
+//   ["Nathan", "Brooks"],
+//   ["Yewande", "Ajayi"],
+//   ["Kelechi", "Onuoha"],
+//   ["Mariam", "Sule"],
+//   ["Ethan", "Reed"],
+//   ["Ivy", "Zhang"],
+//   ["Nabil", "Hassan"],
+//   ["Bukola", "Thomas"],
+//   ["Jordan", "Lee"],
+//   ["Ayo", "Bankole"],
+//   ["Sara", "Patel"],
+//   ["Michael", "Stone"],
+//   ["Halima", "Garba"],
+// ] as const;
 
-const staffRoles = [
-  "Principal Architect",
-  "Associate Architect",
-  "Project Architect",
-  "Senior Architect",
-  "Architect",
-  "Interior Architect",
-  "Urban Designer",
-  "Technical Architect",
-  "BIM Coordinator",
-  "Design Architect",
-  "Landscape Architect",
-  "Project Coordinator",
-] as const;
+// const staffRoles = [
+//   "Principal Architect",
+//   "Associate Architect",
+//   "Project Architect",
+//   "Senior Architect",
+//   "Architect",
+//   "Interior Architect",
+//   "Urban Designer",
+//   "Technical Architect",
+//   "BIM Coordinator",
+//   "Design Architect",
+//   "Landscape Architect",
+//   "Project Coordinator",
+// ] as const;
 
-const exTeamMembers = [
-  "Adeola Martins",
-  "Chisom Nnamani",
-  "Damilola George",
-  "Efe Osagie",
-  "Folake Adeniran",
-  "Ibrahim Lawal",
-  "Kemi Oladipo",
-  "Morenike Peters",
-  "Nosa Eromosele",
-  "Oyinda Aluko",
-  "Seyi Olatunji",
-  "Temilade Johnson",
-] as const;
+// const exTeamMembers = [
+//   "Adeola Martins",
+//   "Chisom Nnamani",
+//   "Damilola George",
+//   "Efe Osagie",
+//   "Folake Adeniran",
+//   "Ibrahim Lawal",
+//   "Kemi Oladipo",
+//   "Morenike Peters",
+//   "Nosa Eromosele",
+//   "Oyinda Aluko",
+//   "Seyi Olatunji",
+//   "Temilade Johnson",
+// ] as const;
 
-const profileBiography =
-  "Brings a thoughtful approach to design, translating context, collaboration and technical rigour into architecture that serves people and place. Their work moves carefully from early ideas through coordination and delivery.";
+// const profileBiography =
+//   "Brings a thoughtful approach to design, translating context, collaboration and technical rigour into architecture that serves people and place. Their work moves carefully from early ideas through coordination and delivery.";
 
 const staffNameClassName =
   "wide-screen-caption text-[clamp(0.62rem,0.72vw,0.72rem)] font-medium leading-[1.2] tracking-tight";
-
-const staffPortraits = [
-  "/team/staff-07.webp",
-  "/team/staff-02.webp",
-  "/team/staff-14.webp",
-  "/team/staff-05.webp",
-  "/team/staff-11.webp",
-  "/team/staff-16.webp",
-  "/team/staff-01.webp",
-  "/team/staff-12.webp",
-  "/team/staff-08.webp",
-  "/team/staff-03.webp",
-  "/team/staff-15.webp",
-  "/team/staff-10.webp",
-  "/team/staff-06.webp",
-  "/team/staff-17.webp",
-  "/team/staff-04.webp",
-  "/team/staff-13.webp",
-  "/team/staff-09.webp",
-] as const;
 
 /* Hierarchy categories retained for restoring the grouped layout.
 const staffCategories = [
@@ -120,11 +101,10 @@ interface SelectedProfile {
   width: number;
 }
 
-function getPortrait(index: number) {
-  const portrait = staffPortraits[index];
-
+function getPortraitStyle(portraitUrl: string) {
+  if (!portraitUrl) return {};
   return {
-    backgroundImage: `url('${portrait}')`,
+    backgroundImage: `url('${portraitUrl}')`,
     backgroundPosition: "center top",
     backgroundSize: "cover",
   };
@@ -132,35 +112,45 @@ function getPortrait(index: number) {
 
 function ProfileContent({
   headingId,
-  index,
+  member,
 }: {
   headingId: string;
-  index: number;
+  member: CurrentTeamMember;
 }) {
-  const [firstName, surname] = staffNames[index];
-
   return (
-    <div className={`${styles.content} flex min-h-0 flex-col p-[clamp(1.25rem,2.1vw,1.875rem)]`}>
+    <div
+      className={`${styles.content} flex min-h-0 flex-col p-[clamp(1.25rem,2.1vw,1.875rem)]`}
+    >
       <div className={`${styles.copy} w-[200px] 2xl:w-[300px] max-w-full`}>
         <h3
           id={headingId}
           className={`${styles.name} wide-screen-caption text-[16px] xl:text-[20px] font-medium leading-[1.08] tracking-[-0.035em]`}
         >
-          <span className="block">{firstName}</span>
-          <span className="block">{surname}</span>
+          <span className="block">{member.firstName}</span>
+          <span className="block">{member.surname}</span>
         </h3>
-        <p className={`${styles.role} mt-2 text-[14px] font-medium leading-none text-brand-yellow`}>
-          {staffRoles[index % staffRoles.length]}
+        <p
+          className={`${styles.role} mt-2 text-[14px] font-medium leading-none text-brand-yellow`}
+        >
+          {member.role}
         </p>
-        <p className={`${styles.biography} wide-screen-micro mt-4 w-full text-[8px] leading-[1.3] tracking-[-0.01em] text-white/90`}>
-          {profileBiography}
+        <p
+          className={`${styles.biography} wide-screen-micro mt-4 w-full text-[8px] leading-[1.3] tracking-[-0.01em] text-white/90`}
+        >
+          {member.biography}
         </p>
       </div>
     </div>
   );
 }
 
-export default function StaffGrid() {
+export default function StaffGrid({
+  currentMembers,
+  formerMembers,
+}: {
+  currentMembers: CurrentTeamMember[];
+  formerMembers: FormerTeamMember[];
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const desktopCloseButtonRef = useRef<HTMLButtonElement>(null);
   const mobileCloseButtonRef = useRef<HTMLButtonElement>(null);
@@ -231,7 +221,10 @@ export default function StaffGrid() {
       aria-label="ECAD Architects team directory"
       className="wide-screen-gutter bg-transparent px-[clamp(1.5rem,6.8vw,7rem)] pb-[clamp(4rem,6vw,6rem)] pt-[clamp(3.5rem,5vw,5rem)] text-white"
     >
-      <div ref={containerRef} className="wide-screen-max relative mx-auto w-full max-w-[1600px]">
+      <div
+        ref={containerRef}
+        className="wide-screen-max relative mx-auto w-full max-w-[1600px]"
+      >
         <div
           aria-hidden={selectedProfile ? true : undefined}
           inert={selectedProfile ? true : undefined}
@@ -241,30 +234,28 @@ export default function StaffGrid() {
             data-staff-grid
             className="grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-x-4 lg:gap-y-8"
           >
-            {staffNames
-              .slice(0, staffPortraits.length)
-              .map(([firstName, surname], index) => {
-                const fullName = `${firstName} ${surname}`;
+            {currentMembers.map((member, index) => {
+              const fullName = `${member.firstName} ${member.surname}`.trim();
 
-                return (
-                  <article key={fullName} className={`group ${styles.card}`}>
-                    <button
-                      type="button"
-                      data-staff-image
-                      data-selected={selectedProfile?.index === index}
-                      aria-label={`View ${fullName}'s profile`}
-                      aria-haspopup="dialog"
-                      className={`${styles.portrait} block aspect-square w-full bg-[#d9d9d9] bg-no-repeat focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
-                      style={getPortrait(index)}
-                      onClick={(event) => openProfile(index, event.currentTarget)}
-                    />
+              return (
+                <article key={member._id} className={`group ${styles.card}`}>
+                  <button
+                    type="button"
+                    data-staff-image
+                    data-selected={selectedProfile?.index === index}
+                    aria-label={`View ${fullName}'s profile`}
+                    aria-haspopup="dialog"
+                    className={`${styles.portrait} block aspect-square w-full bg-[#d9d9d9] bg-no-repeat focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
+                    style={getPortraitStyle(member.portraitUrl)}
+                    onClick={(event) => openProfile(index, event.currentTarget)}
+                  />
 
-                    <div className={`${staffNameClassName} mt-1 space-y-1 py-1`}>
-                      <p className="whitespace-nowrap">{fullName}</p>
-                      <p className="text-[0.85em] font-normal leading-[1.3] text-white/70">
-                        {staffRoles[index % staffRoles.length]}
-                      </p>
-                      {/* <button
+                  <div className={`${staffNameClassName} mt-1 space-y-1 py-1`}>
+                    <p className="whitespace-nowrap">{fullName}</p>
+                    <p className="text-[0.85em] font-normal leading-[1.3] text-white/70">
+                      {member.role}
+                    </p>
+                    {/* <button
                         type="button"
                         aria-label={`View ${fullName}'s profile`}
                         className="inline-flex size-7 shrink-0 items-center justify-end rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:size-9"
@@ -281,10 +272,10 @@ export default function StaffGrid() {
                           className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 lg:size-[12px]"
                         />
                       </button> */}
-                    </div>
-                  </article>
-                );
-              })}
+                  </div>
+                </article>
+              );
+            })}
           </div>
 
           {/* Hierarchy layout retained for later use.
@@ -364,16 +355,21 @@ export default function StaffGrid() {
             </summary>
 
             <ul className="mt-[clamp(1.5rem,3vw,2.5rem)] grid grid-cols-2 gap-x-5 gap-y-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {exTeamMembers.map((name) => (
+              {formerMembers.map((member) => (
                 <li
-                  key={name}
+                  key={member._id}
                   className={`${staffNameClassName} flex items-center gap-2.5 text-white/90`}
                 >
                   <span
                     aria-hidden="true"
                     className="size-1 shrink-0 rounded-full bg-current"
                   />
-                  <span>{name}</span>
+                  <span>
+                    {member.firstName} {member.surname}
+                    {member.startYear && member.endYear
+                      ? ` (${member.startYear} - ${member.endYear})`
+                      : ""}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -383,124 +379,139 @@ export default function StaffGrid() {
         <AnimatePresence initial={false}>
           {selectedProfile ? (
             <>
-            <motion.button
-              type="button"
-              aria-label="Close selected team member"
-              className="absolute inset-0 z-20 hidden cursor-default bg-[#202120]/25 backdrop-blur-[3px] lg:block"
-              initial={shouldReduceMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.65, ease: "easeInOut" }}
-              onClick={() => setSelectedProfile(null)}
-            />
-
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="selected-team-member-desktop"
-              className="absolute z-30 hidden overflow-hidden rounded-[8px] border border-white/80 bg-[#202120] text-white shadow-2xl lg:grid"
-              initial={
-                shouldReduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      clipPath: `inset(0 ${Math.max(
-                        0,
-                        (1 - selectedProfile.imageWidth / selectedProfile.width) *
-                          100,
-                      )}% 0 0 round 8px)`,
-                    }
-              }
-              animate={{ opacity: 1, clipPath: "inset(0 0% 0 0 round 8px)" }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.65, ease: "easeInOut" }}
-              style={{
-                gridTemplateColumns: `${selectedProfile.imageWidth}px minmax(0, 1fr)`,
-                height: selectedProfile.height,
-                left: selectedProfile.left,
-                top: selectedProfile.top,
-                width: selectedProfile.width,
-              }}
-            >
-              <div
-                role="img"
-                aria-label={`Portrait of ${staffNames[selectedProfile.index].join(" ")}`}
-                className="h-full w-full bg-[#d9d9d9] bg-no-repeat"
-                style={getPortrait(selectedProfile.index)}
-              />
-              <div className={`${styles.desktopDetails} relative min-h-0`}>
-                <ProfileContent
-                  headingId="selected-team-member-desktop"
-                  index={selectedProfile.index}
-                />
-                <button
-                  ref={desktopCloseButtonRef}
-                  type="button"
-                  aria-label="Close profile"
-                  className={`${styles.closeButton} absolute right-[14%] top-[52%] flex size-10 -translate-y-1/2 items-center justify-center rounded-sm transition-colors hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
-                  onClick={() => setSelectedProfile(null)}
-                >
-                  <Image
-                    src="/team-profile-close-arrow.svg"
-                    alt=""
-                    width={15}
-                    height={14}
-                    aria-hidden="true"
-                    className="h-[14px] w-[15px]"
-                  />
-                </button>
-              </div>
-            </motion.div>
-
-            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#202120]/45 p-4 backdrop-blur-[4px] lg:hidden">
-              <button
+              <motion.button
                 type="button"
                 aria-label="Close selected team member"
-                className="absolute inset-0 cursor-default"
+                className="absolute inset-0 z-20 hidden cursor-default bg-[#202120]/25 backdrop-blur-[3px] lg:block"
+                initial={shouldReduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  duration: shouldReduceMotion ? 0 : 0.65,
+                  ease: "easeInOut",
+                }}
                 onClick={() => setSelectedProfile(null)}
               />
+
               <motion.div
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby="selected-team-member-mobile"
-                className={`${styles.mobileProfile} relative z-10 max-h-[90svh] w-full max-w-md overflow-y-auto border border-white/25 bg-[#202120] text-white shadow-2xl`}
+                aria-labelledby="selected-team-member-desktop"
+                className="absolute z-30 hidden overflow-hidden rounded-[8px] border border-white/80 bg-[#202120] text-white shadow-2xl lg:grid"
                 initial={
                   shouldReduceMotion
                     ? false
-                    : { opacity: 0, scale: 0.96, y: 12 }
+                    : {
+                        opacity: 0,
+                        clipPath: `inset(0 ${Math.max(
+                          0,
+                          (1 -
+                            selectedProfile.imageWidth /
+                              selectedProfile.width) *
+                            100,
+                        )}% 0 0 round 8px)`,
+                      }
                 }
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: 8 }}
-                transition={{ duration: shouldReduceMotion ? 0 : 0.65, ease: "easeInOut" }}
+                animate={{ opacity: 1, clipPath: "inset(0 0% 0 0 round 8px)" }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  duration: shouldReduceMotion ? 0 : 0.65,
+                  ease: "easeInOut",
+                }}
+                style={{
+                  gridTemplateColumns: `${selectedProfile.imageWidth}px minmax(0, 1fr)`,
+                  height: selectedProfile.height,
+                  left: selectedProfile.left,
+                  top: selectedProfile.top,
+                  width: selectedProfile.width,
+                }}
               >
                 <div
                   role="img"
-                  aria-label={`Portrait of ${staffNames[selectedProfile.index].join(" ")}`}
-                  className="aspect-square bg-[#d9d9d9] bg-no-repeat"
-                  style={getPortrait(selectedProfile.index)}
+                  aria-label={`Portrait of ${currentMembers[selectedProfile.index].firstName} ${currentMembers[selectedProfile.index].surname}`}
+                  className="h-full w-full bg-[#d9d9d9] bg-no-repeat"
+                  style={getPortraitStyle(
+                    currentMembers[selectedProfile.index].portraitUrl,
+                  )}
                 />
-                <ProfileContent
-                  headingId="selected-team-member-mobile"
-                  index={selectedProfile.index}
-                />
-                <button
-                  ref={mobileCloseButtonRef}
-                  type="button"
-                  aria-label="Close profile"
-                  className="absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-[#202120]/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  onClick={() => setSelectedProfile(null)}
-                >
-                  <Image
-                    src="/team-profile-close-arrow.svg"
-                    alt=""
-                    width={15}
-                    height={14}
-                    aria-hidden="true"
-                    className="h-[14px] w-[15px]"
+                <div className={`${styles.desktopDetails} relative min-h-0`}>
+                  <ProfileContent
+                    headingId="selected-team-member-desktop"
+                    member={currentMembers[selectedProfile.index]}
                   />
-                </button>
+                  <button
+                    ref={desktopCloseButtonRef}
+                    type="button"
+                    aria-label="Close profile"
+                    className={`${styles.closeButton} absolute right-[14%] top-[52%] flex size-10 -translate-y-1/2 items-center justify-center rounded-sm transition-colors hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
+                    onClick={() => setSelectedProfile(null)}
+                  >
+                    <Image
+                      src="/team-profile-close-arrow.svg"
+                      alt=""
+                      width={15}
+                      height={14}
+                      aria-hidden="true"
+                      className="h-[14px] w-[15px]"
+                    />
+                  </button>
+                </div>
               </motion.div>
-            </div>
+
+              <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#202120]/45 p-4 backdrop-blur-[4px] lg:hidden">
+                <button
+                  type="button"
+                  aria-label="Close selected team member"
+                  className="absolute inset-0 cursor-default"
+                  onClick={() => setSelectedProfile(null)}
+                />
+                <motion.div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="selected-team-member-mobile"
+                  className={`${styles.mobileProfile} relative z-10 max-h-[90svh] w-full max-w-md overflow-y-auto border border-white/25 bg-[#202120] text-white shadow-2xl`}
+                  initial={
+                    shouldReduceMotion
+                      ? false
+                      : { opacity: 0, scale: 0.96, y: 12 }
+                  }
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: 8 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.65,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <div
+                    role="img"
+                    aria-label={`Portrait of ${currentMembers[selectedProfile.index].firstName} ${currentMembers[selectedProfile.index].surname}`}
+                    className="aspect-square bg-[#d9d9d9] bg-no-repeat"
+                    style={getPortraitStyle(
+                      currentMembers[selectedProfile.index].portraitUrl,
+                    )}
+                  />
+                  <ProfileContent
+                    headingId="selected-team-member-mobile"
+                    member={currentMembers[selectedProfile.index]}
+                  />
+                  <button
+                    ref={mobileCloseButtonRef}
+                    type="button"
+                    aria-label="Close profile"
+                    className="absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-[#202120]/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    onClick={() => setSelectedProfile(null)}
+                  >
+                    <Image
+                      src="/team-profile-close-arrow.svg"
+                      alt=""
+                      width={15}
+                      height={14}
+                      aria-hidden="true"
+                      className="h-[14px] w-[15px]"
+                    />
+                  </button>
+                </motion.div>
+              </div>
             </>
           ) : null}
         </AnimatePresence>
