@@ -12,7 +12,9 @@ function MediaRenderer({
   sizes: string;
 }) {
   if (!media.imageUrl && !media.videoUrl) {
-    return <div className="absolute inset-0 size-full animate-pulse bg-[#c4c1b9]" />;
+    return (
+      <div className="absolute inset-0 size-full animate-pulse bg-[#c4c1b9]" />
+    );
   }
 
   if (media.mediaType === "video" && media.videoUrl) {
@@ -46,16 +48,25 @@ function MediaRenderer({
     );
   }
 
-  return <div className="absolute inset-0 size-full animate-pulse bg-[#c4c1b9]" />;
+  return (
+    <div className="absolute inset-0 size-full animate-pulse bg-[#c4c1b9]" />
+  );
 }
 
 function LargeImage({
   media,
   priority,
-}: { media: MediaBlock, priority?: boolean }) {
+}: {
+  media: MediaBlock;
+  priority?: boolean;
+}) {
   return (
     <div className="relative min-h-0 aspect-square overflow-hidden rounded-[5px] bg-[#d9d9d9] lg:h-full lg:aspect-auto">
-      <MediaRenderer media={media} priority={priority} sizes="(min-width: 1024px) 43vw, 100vw" />
+      <MediaRenderer
+        media={media}
+        priority={priority}
+        sizes="(min-width: 1024px) 43vw, 100vw"
+      />
     </div>
   );
 }
@@ -112,7 +123,9 @@ function PrincipleStory({
 
 export default function CulturePrinciplesSection({
   principles,
-}: { principles: AboutPageData["principles"] }) {
+}: {
+  principles: AboutPageData["principles"];
+}) {
   if (principles.length === 0) return null;
 
   return (
@@ -135,10 +148,7 @@ export default function CulturePrinciplesSection({
           );
 
           const largeImage = (
-            <LargeImage
-              media={principle.primaryMedia}
-              priority={index === 0}
-            />
+            <LargeImage media={principle.primaryMedia} priority={index === 0} />
           );
 
           return (
