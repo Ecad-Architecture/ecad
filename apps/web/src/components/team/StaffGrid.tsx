@@ -366,9 +366,6 @@ export default function StaffGrid({
                   />
                   <span>
                     {member.firstName} {member.surname}
-                    {member.startYear && member.endYear
-                      ? ` (${member.startYear} - ${member.endYear})`
-                      : ""}
                   </span>
                 </li>
               ))}

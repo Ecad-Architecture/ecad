@@ -9,9 +9,7 @@ export const TEAM_MEMBERS_QUERY = defineQuery(/* groq */ `
     membershipStatus,
     role,
     "portrait": portrait.asset.asset->url,
-    "biography": pt::text(biography),
-    startYear,
-    endYear
+    "biography": pt::text(biography)
   }
 `);
 
