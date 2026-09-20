@@ -21,7 +21,7 @@ export default async function TeamPage() {
     <main className="flex-1 bg-white">
       <section
         aria-label="Team hero"
-        className="wide-screen-gutter px-[clamp(1.25rem,6.8vw,7rem)] pt-[clamp(2.5rem,7.5vw,8.1rem)]"
+        className="wide-screen-gutter px-[clamp(1.25rem,3vw,3rem)] pb-[clamp(1.75rem,4vw,3rem)] pt-[clamp(0.5rem,1.1vw,1rem)]"
       >
         <div className="relative aspect-[2.34/1] w-full overflow-hidden bg-[#d8d5ce]">
           {pageData.heroUrl && (

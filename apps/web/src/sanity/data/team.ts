@@ -12,8 +12,6 @@ export interface SanityTeamMemberRecord {
   role?: string | null;
   portrait?: string | null;
   biography?: string | null;
-  startYear?: number | null;
-  endYear?: number | null;
 }
 
 export interface CurrentTeamMember {
@@ -29,8 +27,6 @@ export interface FormerTeamMember {
   _id: string;
   firstName: string;
   surname: string;
-  startYear?: number;
-  endYear?: number;
 }
 
 export const getTeamMembers = cache(async () => {
@@ -48,8 +44,6 @@ export const getTeamMembers = cache(async () => {
         _id: member._id,
         firstName: member.firstName?.trim() || "",
         surname: member.surname?.trim() || "",
-        startYear: member.startYear || undefined,
-        endYear: member.endYear || undefined,
       });
     } else {
       currentMembers.push({

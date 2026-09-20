@@ -91,50 +91,6 @@ export const teamMember = defineType({
         ),
     }),
     defineField({
-      name: 'startYear',
-      title: 'Start year',
-      type: 'number',
-      group: 'employment',
-      description: 'The four-digit year the person started at ECAD.',
-      validation: (rule) =>
-        rule.custom((startYear, context) => {
-          if (context.document?.membershipStatus === 'former' && !startYear) {
-            return 'Start year is required for former team members'
-          }
-          if (startYear !== undefined) {
-            if (!Number.isInteger(startYear)) return 'Start year must be a whole four-digit year'
-            if (startYear < 1900 || startYear > new Date().getFullYear()) {
-              return `Start year must be between 1900 and ${new Date().getFullYear()}`
-            }
-          }
-          return true
-        }),
-    }),
-    defineField({
-      name: 'endYear',
-      title: 'End year',
-      type: 'number',
-      group: 'employment',
-      description: 'The four-digit year the person left ECAD.',
-      hidden: ({document}) => document?.membershipStatus !== 'former',
-      validation: (rule) =>
-        rule.custom((endYear, context) => {
-          const document = context.document as
-            {membershipStatus?: string; startYear?: number} | undefined
-
-          if (document?.membershipStatus !== 'former') return true
-          if (!endYear) return 'End year is required for former team members'
-          if (!Number.isInteger(endYear)) return 'End year must be a whole four-digit year'
-          if (endYear < 1900 || endYear > new Date().getFullYear()) {
-            return `End year must be between 1900 and ${new Date().getFullYear()}`
-          }
-          if (document.startYear && endYear < document.startYear) {
-            return 'End year must be the same as or later than the start year'
-          }
-          return true
-        }),
-    }),
-    defineField({
       name: 'visibility',
       title: 'Website visibility',
       type: 'string',
@@ -169,14 +125,12 @@ export const teamMember = defineType({
       role: 'role',
       status: 'membershipStatus',
       media: 'portrait.asset',
-      startYear: 'startYear',
-      endYear: 'endYear',
     },
-    prepare: ({firstName, surname, role, status, media, startYear, endYear}) => ({
+    prepare: ({firstName, surname, role, status, media}) => ({
       title: `${firstName || ''} ${surname || ''}`.trim(),
       subtitle:
         status === 'former'
-          ? `Former team member (${startYear || '?'} - ${endYear || '?'})`
+          ? 'Former team member'
           : `${role || 'Role not set'} · Current team`,
       media,
     }),
