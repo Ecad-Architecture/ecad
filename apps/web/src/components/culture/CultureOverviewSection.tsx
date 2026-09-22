@@ -74,7 +74,7 @@ export default function CultureOverviewSection({
                 </p>
               </details>
             ) : (
-              <p key={resource.key} className="max-w-136">
+              <p key={resource.key} className="max-w-136 pl-8">
                 {resource.title}
               </p>
             ),
