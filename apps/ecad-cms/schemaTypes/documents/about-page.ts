@@ -52,7 +52,7 @@ export const aboutPage = defineType({
               title: 'Enable expandable content',
               type: 'boolean',
               description: 'Show the “+” control and allow visitors to expand this resource.',
-              initialValue: true,
+              initialValue: false,
             }),
             defineField({name: 'body', type: 'richText', validation: (rule) => rule.required()}),
           ],

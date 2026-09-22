@@ -24,13 +24,15 @@ export function sanityFetch<TResult>({
   query,
   revalidate = 60,
   tags = [],
+  useCdn = true,
 }: {
   params?: QueryParams;
   query: string;
   revalidate?: number | false;
   tags?: string[];
+  useCdn?: boolean;
 }) {
-  return sanityClient.fetch<TResult>(query, params, {
+  return sanityClient.withConfig({ useCdn }).fetch<TResult>(query, params, {
     next: { revalidate, tags },
   });
 }
