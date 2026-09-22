@@ -106,7 +106,9 @@ function normalizeMediaBlock(raw?: RawMediaBlock | null): MediaBlock {
 export const getAboutPageData = cache(async (): Promise<AboutPageData> => {
   const data = await sanityFetch<RawAboutPageData | null>({
     query: ABOUT_PAGE_QUERY,
+    revalidate: 0,
     tags: ["aboutPage"],
+    useCdn: false,
   });
 
   return {
@@ -117,7 +119,7 @@ export const getAboutPageData = cache(async (): Promise<AboutPageData> => {
       key: r._key || r.title || "resource",
       title: r.title || "",
       body: r.body || "",
-      isExpandable: r.isExpandable ?? true,
+      isExpandable: r.isExpandable === true,
     })),
     beliefs: (data?.beliefs || []).map((b) => ({
       title: b.title || "",

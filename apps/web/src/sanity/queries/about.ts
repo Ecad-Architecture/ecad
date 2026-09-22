@@ -15,7 +15,7 @@ export const ABOUT_PAGE_QUERY = defineQuery(/* groq */ `
     resources[] {
       _key,
       title,
-      "isExpandable": coalesce(isExpandable, true),
+      isExpandable,
       "body": pt::text(body)
     },
     beliefs[] {
