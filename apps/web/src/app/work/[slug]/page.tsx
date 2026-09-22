@@ -39,7 +39,7 @@ export async function generateMetadata({
       title,
       description,
       type: "article",
-      url: `https://ecadarchitects.com/work/${slug}`,
+      url: `https://www.ecadarchitects.com/work/${slug}`,
       images: project.heroSrc
         ? [
             {
@@ -81,7 +81,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     name: project.title,
     description: project.description,
     image: project.heroSrc,
-    url: `https://ecadarchitects.com/work/${slug}`,
+    url: `https://www.ecadarchitects.com/work/${slug}`,
     creator: {
       "@type": "Organization",
       name: "ECAD Architects",

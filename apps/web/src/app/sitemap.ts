@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { getWorkProjectSlugs } from "@/sanity/data/projects";
 
-const BASE_URL = "https://ecadarchitects.com";
+const BASE_URL = "https://www.ecadarchitects.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const projectSlugs = await getWorkProjectSlugs();
