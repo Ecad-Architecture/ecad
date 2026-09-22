@@ -8,7 +8,6 @@ import {
   useTransform,
 } from "motion/react";
 import {
-  Fragment,
   useCallback,
   useEffect,
   useRef,
@@ -33,74 +32,7 @@ interface HeroSectionProps {
   slides: readonly HeroSlide[];
 }
 
-const SLIDE_DURATION = 4000;
-const TITLE_CHARACTER_DELAY = 28;
-
-function TypewriterTitle({ text }: { text: string }) {
-  const [visibleCharacters, setVisibleCharacters] = useState(0);
-
-  useEffect(() => {
-    if (text.length === 0) {
-      return;
-    }
-
-    let nextCharacter = 0;
-    const interval = window.setInterval(() => {
-      nextCharacter += 1;
-      setVisibleCharacters(nextCharacter);
-
-      if (nextCharacter >= text.length) {
-        window.clearInterval(interval);
-      }
-    }, TITLE_CHARACTER_DELAY);
-
-    return () => window.clearInterval(interval);
-  }, [text]);
-
-  const isComplete = visibleCharacters >= text.length;
-  const words = Array.from(text.matchAll(/\S+/g), (match) => ({
-    start: match.index ?? 0,
-    word: match[0],
-  }));
-  const cursor = (
-    <span className="absolute left-full top-[0.08em] h-[0.8em] w-[2px] animate-pulse bg-current" />
-  );
-
-  return (
-    <>
-      <span aria-hidden="true">
-        {words.map(({ start, word }, wordIndex) => (
-          <Fragment key={`${word}-${wordIndex}`}>
-            <span className="inline-block whitespace-nowrap">
-              {!isComplete && visibleCharacters === 0 && wordIndex === 0 ? (
-                <span className="relative inline-block w-0">{cursor}</span>
-              ) : null}
-              {Array.from(word).map((character, characterIndex) => {
-                const absoluteIndex = start + characterIndex;
-                const isVisible = absoluteIndex < visibleCharacters;
-
-                return (
-                  <span
-                    key={`${character}-${absoluteIndex}`}
-                    className={isVisible ? "relative" : "invisible relative"}
-                  >
-                    {character}
-                    {!isComplete &&
-                    absoluteIndex === visibleCharacters - 1
-                      ? cursor
-                      : null}
-                  </span>
-                );
-              })}
-            </span>
-            {wordIndex < words.length - 1 ? " " : null}
-          </Fragment>
-        ))}
-      </span>
-      <span className="sr-only">{text}</span>
-    </>
-  );
-}
+const SLIDE_DURATION = 5000;
 
 export default function HeroSection({ slides }: HeroSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -242,13 +174,37 @@ export default function HeroSection({ slides }: HeroSectionProps) {
         <div className={`wide-screen-max wide-screen-gutter pointer-events-none absolute inset-x-0 z-20 mx-auto mb-10 w-full max-w-[1600px] px-5 sm:bottom-[clamp(2rem,8.3vh,5.5rem)] md:px-8 lg:mb-0 lg:px-[6.8vw] transition-[bottom] duration-300 ${isInfoOpen ? "bottom-[4.5rem]" : "bottom-6"}`}>
           <div className="wide-screen-home-title-container w-50 lg:w-175">
             <p
-              aria-live="polite"
-              className={`font-display ${isInfoOpen ? "text-[30px] md:text-[38px] wide-screen-title-open" : "wide-screen-home-title wide-screen-title text-[38px] md:text-[62px]"} font-medium leading-none tracking-normal drop-shadow-sm transition-[font-size] duration-300`}
+              className={`grid font-display ${isInfoOpen ? "text-[30px] md:text-[38px] wide-screen-title-open" : "wide-screen-home-title wide-screen-title text-[38px] md:text-[62px]"} font-medium leading-none tracking-normal drop-shadow-sm transition-[font-size] duration-300`}
             >
-              <TypewriterTitle
-                key={`${activeIndex}-${activeSlide.title}`}
-                text={activeSlide.title}
-              />
+              {/* Overlapping sizing copies reserve the tallest title at every breakpoint. */}
+              {slides.map((slide, index) => (
+                <span
+                  key={`title-size-${index}`}
+                  aria-hidden="true"
+                  className="invisible col-start-1 row-start-1"
+                >
+                  {slide.title}
+                </span>
+              ))}
+              <AnimatePresence initial={false} mode="wait">
+                <motion.span
+                  key={`${activeIndex}-${activeSlide.title}`}
+                  aria-hidden="true"
+                  className="col-start-1 row-start-1 self-end"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                  }}
+                  exit={{ opacity: 0, transition: { duration: 0.2, ease: "easeOut" } }}
+                >
+                  {activeSlide.title}
+                </motion.span>
+              </AnimatePresence>
+              <span className="sr-only" aria-live="polite" aria-atomic="true">
+                {activeSlide.title}
+              </span>
             </p>
           </div>
         </div>

@@ -1,16 +1,13 @@
 "use client";
 
-import {
-  REDUCE_SITE_MOTION as shouldReduceMotion,
-  SMOOTH_EASE,
-} from "@/motion";
+import { REDUCE_SITE_MOTION as shouldReduceMotion } from "@/motion";
 
 import Image from "next/image";
-import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { galleryCategories, type GalleryCategory, type ProjectDetail } from "./types";
 import { getProjectGalleryImages } from "./projectGallery";
+import ScrollableProjectGallery, { type ScrollableGalleryHandle } from "./ScrollableProjectGallery";
 
 interface ProjectOverviewProps {
   project: ProjectDetail;
@@ -33,6 +30,7 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
   const [focusedImage, setFocusedImage] = useState<GalleryHighlight | null>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const mobileGalleryRef = useRef<HTMLDivElement>(null);
+  const desktopGalleryRef = useRef<ScrollableGalleryHandle>(null);
   const expandedImageRef = useRef<HTMLDivElement>(null);
   const isExpanded = activeImageIndex !== null;
   const galleryImages = useMemo(() => getProjectGalleryImages(project), [project]);
@@ -47,15 +45,6 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
     index: galleryImages.findIndex((image) => image.category === category),
   }));
   const visibleImageCount = Math.min(4, galleryImages.length);
-  const visibleGalleryImages = Array.from(
-    { length: visibleImageCount },
-    (_, offset) => {
-      const galleryIndex =
-        (galleryStartIndex + offset) % galleryImages.length;
-
-      return { galleryIndex, image: galleryImages[galleryIndex] };
-    },
-  );
   const activeImage =
     activeImageIndex === null ? null : galleryImages[activeImageIndex];
 
@@ -84,7 +73,7 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
       const image = track.querySelector<HTMLElement>(`[data-gallery-index="${targetIndex}"]`);
       if (image) track.scrollTo({ left: image.offsetLeft, behavior: shouldReduceMotion ? "instant" : "smooth" });
     } else {
-      setGalleryStartIndex(targetIndex);
+      desktopGalleryRef.current?.show(targetIndex);
     }
   }, [galleryImages.length]);
 
@@ -133,7 +122,7 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
       wheelDistance = 0;
     };
     const onWheel = (event: WheelEvent) => {
-      if (!isExpanded && window.matchMedia("(max-width: 767px)").matches) return;
+      if (!isExpanded) return;
       if (event.ctrlKey) return;
       const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
         ? event.deltaX : event.deltaY;
@@ -155,6 +144,7 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
       }
     };
     const onKeyDown = (event: KeyboardEvent) => {
+      if (!isExpanded && window.matchMedia("(min-width: 768px)").matches) return;
       if ((!isExpanded && !hovered && !surface.contains(document.activeElement)) ||
           event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
           (event.target instanceof HTMLElement &&
@@ -292,56 +282,12 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
           </div>
 
           <div id="project-gallery" ref={galleryRef} className="relative mt-6 md:mt-7" role="region" aria-label="Project gallery">
-            <div
-              className={`hidden gap-3 md:grid ${
-                visibleImageCount === 1
-                  ? "md:grid-cols-1"
-                  : "md:grid-cols-4"
-              }`}
-            >
-              {visibleGalleryImages.map(({ galleryIndex, image }, slot) => (
-                <div key={slot} className={`relative overflow-hidden ${visibleImageCount === 1 ? "aspect-[16/10]" : "aspect-[0.77/1]"}`}>
-                <button
-                  type="button"
-                  aria-label={`Expand ${image.category.toLowerCase()} ${image.kind} ${galleryIndex + 1}`}
-                  onClick={() => setActiveImageIndex(galleryIndex)}
-                  onMouseEnter={() => setHoveredImage({ slot })}
-                  onMouseLeave={() => setHoveredImage(null)}
-                  onFocus={(event) => {
-                    if (event.currentTarget.matches(":focus-visible")) setFocusedImage({ slot });
-                  }}
-                  onBlur={() => setFocusedImage(null)}
-                  className="group relative block h-full w-full overflow-hidden bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
-                >
-                  <AnimatePresence initial={false} mode="sync">
-                  <motion.div
-                    key={image.key}
-                    className="absolute inset-0"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{
-                      duration: GALLERY_TRANSITION_DURATION,
-                      ease: SMOOTH_EASE,
-                    }}
-                  >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes={visibleImageCount === 1 ? "86vw" : "22vw"}
-                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.025] group-focus-visible:scale-[1.025]"
-                    onLoad={({ currentTarget }) => {
-                      const ratio = currentTarget.naturalWidth / currentTarget.naturalHeight;
-                      setImageRatios((ratios) => ratios[image.src] === ratio ? ratios : { ...ratios, [image.src]: ratio });
-                    }}
-                  />
-                  </motion.div>
-                  </AnimatePresence>
-                </button>
-                </div>
-              ))}
-            </div>
+            <ScrollableProjectGallery
+              ref={desktopGalleryRef}
+              images={galleryImages}
+              onSelect={setActiveImageIndex}
+              onIndexChange={setGalleryStartIndex}
+            />
 
             <div
               ref={mobileGalleryRef}
