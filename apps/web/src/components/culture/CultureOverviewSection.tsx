@@ -4,8 +4,10 @@ interface CultureOverviewSectionProps {
   title: string;
   introduction: string;
   resources: Array<{
+    key: string;
     title: string;
     body: string;
+    isExpandable: boolean;
   }>;
   beliefs: Array<{
     title: string;
@@ -55,22 +57,28 @@ export default function CultureOverviewSection({
         />
 
         <div className="wide-screen-body-sm mt-[clamp(2.5rem,7vh,4rem)] space-y-3 text-[clamp(0.8rem,0.95vw,0.9rem)] font-medium leading-none">
-          {resources.map((resource) => (
-            <details key={resource.title} className="group max-w-136">
-              <summary className="flex w-fit cursor-pointer list-none items-center gap-4 outline-none focus-visible:ring-2 focus-visible:ring-[#14843b] focus-visible:ring-offset-4 [&::-webkit-details-marker]:hidden">
-                <span
-                  aria-hidden="true"
-                  className="inline-flex size-4 origin-center items-center justify-center text-xl font-light leading-none transition-transform duration-200 group-open:rotate-45"
-                >
-                  +
-                </span>
-                <span>{resource.title}</span>
-              </summary>
-              <p className="wide-screen-label ml-8 mt-3 max-w-124 text-[clamp(0.78rem,0.9vw,0.86rem)] font-normal leading-[1.45] tracking-[-0.015em] text-[#202120]/80 whitespace-pre-wrap">
-                {resource.body}
+          {resources.map((resource) =>
+            resource.isExpandable ? (
+              <details key={resource.key} className="group max-w-136">
+                <summary className="flex w-fit cursor-pointer list-none items-center gap-4 outline-none focus-visible:ring-2 focus-visible:ring-[#14843b] focus-visible:ring-offset-4 [&::-webkit-details-marker]:hidden">
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex size-4 origin-center items-center justify-center text-xl font-light leading-none transition-transform duration-200 group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                  <span>{resource.title}</span>
+                </summary>
+                <p className="wide-screen-label ml-8 mt-3 max-w-124 text-[clamp(0.78rem,0.9vw,0.86rem)] font-normal leading-[1.45] tracking-[-0.015em] text-[#202120]/80 whitespace-pre-wrap">
+                  {resource.body}
+                </p>
+              </details>
+            ) : (
+              <p key={resource.key} className="max-w-136">
+                {resource.title}
               </p>
-            </details>
-          ))}
+            ),
+          )}
         </div>
       </div>
 

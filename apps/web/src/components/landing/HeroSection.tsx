@@ -59,7 +59,7 @@ function TypewriterTitle({ text }: { text: string }) {
 
   const isComplete = visibleCharacters >= text.length;
   const words = Array.from(text.matchAll(/\S+/g), (match) => ({
-    start: match.index,
+    start: match.index ?? 0,
     word: match[0],
   }));
   const cursor = (
@@ -239,7 +239,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
           </>
         ) : null}
 
-        <div className="wide-screen-max wide-screen-gutter pointer-events-none absolute inset-x-0 bottom-[5.25rem] z-20 mx-auto mb-10 w-full max-w-[1600px] px-5 sm:bottom-[clamp(2rem,8.3vh,5.5rem)] md:px-8 lg:mb-0 lg:px-[6.8vw]">
+        <div className={`wide-screen-max wide-screen-gutter pointer-events-none absolute inset-x-0 z-20 mx-auto mb-10 w-full max-w-[1600px] px-5 sm:bottom-[clamp(2rem,8.3vh,5.5rem)] md:px-8 lg:mb-0 lg:px-[6.8vw] transition-[bottom] duration-300 ${isInfoOpen ? "bottom-[4.5rem]" : "bottom-6"}`}>
           <div className="wide-screen-home-title-container w-50 lg:w-175">
             <p
               aria-live="polite"
@@ -253,7 +253,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
           </div>
         </div>
 
-        <div className="absolute bottom-[5.25rem] left-6 right-[clamp(1.5rem,7.1vw,8rem)] z-20 flex min-w-0 flex-col items-start justify-between gap-1.5 text-white sm:bottom-[calc(clamp(2rem,8.3vh,5.5rem)+0.5rem)] md:bottom-[clamp(2.05rem,8.4vh,5.6rem)] md:left-auto md:flex-row md:items-center md:justify-end">
+        <div className={`absolute left-6 right-[clamp(1.5rem,7.1vw,8rem)] z-20 flex min-w-0 flex-col items-start justify-between gap-1.5 text-white sm:bottom-[calc(clamp(2rem,8.3vh,5.5rem)+0.5rem)] md:bottom-[clamp(2.05rem,8.4vh,5.6rem)] md:left-auto md:flex-row md:items-center md:justify-end transition-[bottom] duration-300 ${isInfoOpen ? "bottom-[4.5rem]" : "bottom-6"}`}>
           <AnimatePresence initial={false}>
             {isInfoOpen && (
               <motion.dl

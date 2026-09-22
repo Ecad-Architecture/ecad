@@ -119,7 +119,7 @@ export default function WorkHeroSlideshow({
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.1)_0%,transparent_32%,transparent_55%,rgba(0,0,0,0.28)_100%)]"
       />
 
-      <div className="wide-screen-max wide-screen-gutter pointer-events-none absolute inset-x-0 bottom-[clamp(3rem,9vh,6.25rem)] z-10 mx-auto w-full max-w-[1600px] px-5 md:px-8 lg:px-[6.8vw]">
+      <div className="wide-screen-max wide-screen-gutter pointer-events-none absolute inset-x-0 bottom-6 md:bottom-[clamp(3rem,9vh,6.25rem)] z-10 mx-auto w-full max-w-[1600px] px-5 md:px-8 lg:px-[6.8vw]">
         <h1
           id="work-hero-title"
           className="wide-screen-title text-[clamp(2.75rem,5.5vw,4rem)] font-semibold leading-none tracking-[-0.055em] drop-shadow-sm"
