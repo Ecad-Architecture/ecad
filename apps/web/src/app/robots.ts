@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/studio/"],
     },
-    sitemap: "https://ecadarchitects.com/sitemap.xml",
+    sitemap: "https://www.ecadarchitects.com/sitemap.xml",
   };
 }
