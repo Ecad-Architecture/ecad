@@ -1,6 +1,9 @@
 "use client";
 
-import { REDUCE_SITE_MOTION as shouldReduceMotion } from "@/motion";
+import {
+  REDUCE_SITE_MOTION as shouldReduceMotion,
+  SMOOTH_EASE,
+} from "@/motion";
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
@@ -13,7 +16,7 @@ interface ProjectOverviewProps {
   project: ProjectDetail;
 }
 
-const GALLERY_TRANSITION_DURATION = 0.8;
+const GALLERY_TRANSITION_DURATION = 0.9;
 type GalleryHighlight = { category: GalleryCategory } | { slot: number };
 
 function getFirstVisibleIndex(track: HTMLDivElement) {
@@ -297,7 +300,7 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
               }`}
             >
               {visibleGalleryImages.map(({ galleryIndex, image }, slot) => (
-                <div key={image.key} className={`relative overflow-hidden ${visibleImageCount === 1 ? "aspect-[16/10]" : "aspect-[0.77/1]"}`}>
+                <div key={slot} className={`relative overflow-hidden ${visibleImageCount === 1 ? "aspect-[16/10]" : "aspect-[0.77/1]"}`}>
                 <button
                   type="button"
                   aria-label={`Expand ${image.category.toLowerCase()} ${image.kind} ${galleryIndex + 1}`}
@@ -310,14 +313,17 @@ export default function ProjectOverview({ project }: ProjectOverviewProps) {
                   onBlur={() => setFocusedImage(null)}
                   className="group relative block h-full w-full overflow-hidden bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
                 >
-                  <AnimatePresence initial={false}>
+                  <AnimatePresence initial={false} mode="sync">
                   <motion.div
-                    key={image.src}
+                    key={image.key}
                     className="absolute inset-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: GALLERY_TRANSITION_DURATION, ease: [0.42, 0, 0.58, 1] }}
+                    transition={{
+                      duration: GALLERY_TRANSITION_DURATION,
+                      ease: SMOOTH_EASE,
+                    }}
                   >
                   <Image
                     src={image.src}

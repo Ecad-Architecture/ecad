@@ -360,6 +360,69 @@ export type AllSanitySchemaTypes =
   | SanityImageAsset
   | Geopoint;
 
+// Source: ../web/src/sanity/queries/about.ts
+// Variable: ABOUT_PAGE_QUERY
+// Query: *[_type == "aboutPage"][0] {    "hero": {      "mediaType": hero.mediaType,      "imageUrl": hero.image.asset.asset->url,      "imageAlt": hero.image.alt,      "videoUrl": hero.video.url,      "videoThumbnailUrl": hero.video.thumbnail.asset.asset->url,      "videoTitle": hero.video.title    },    aboutTitle,    "introduction": pt::text(introduction),     resources[] {      _key,      title,      "isExpandable": coalesce(isExpandable, true),      "body": pt::text(body)    },    beliefs[] {      title,      "body": pt::text(body)    },    principles[] {      "primaryMedia": {        "mediaType": primaryMedia.mediaType,        "imageUrl": primaryMedia.image.asset.asset->url,        "imageAlt": primaryMedia.image.alt,        "videoUrl": primaryMedia.video.url,        "videoThumbnailUrl": primaryMedia.video.thumbnail.asset.asset->url,        "videoTitle": primaryMedia.video.title      },      story {        "media": {          "mediaType": media.mediaType,          "imageUrl": media.image.asset.asset->url,          "imageAlt": media.image.alt,          "videoUrl": media.video.url,          "videoThumbnailUrl": media.video.thumbnail.asset.asset->url,          "videoTitle": media.video.title        },        label,        statement,        description,        link {          label,          href        }      }    },    callToAction {      title,      description,      label,      href,      "backgroundUrl": backgroundMedia.image.asset.asset->url,      "backgroundAlt": backgroundMedia.image.alt,      "insetUrl": insetMedia.image.asset.asset->url,      "insetAlt": insetMedia.image.alt    }  }
+export type ABOUT_PAGE_QUERY_RESULT = {
+  hero: {
+    mediaType: "image" | "video";
+    imageUrl: string | null;
+    imageAlt: string | null;
+    videoUrl: string | null;
+    videoThumbnailUrl: string | null;
+    videoTitle: string | null;
+  };
+  aboutTitle: string;
+  introduction: string;
+  resources: Array<{
+    _key: string;
+    title: string;
+    isExpandable: true;
+    body: string;
+  }> | null;
+  beliefs: Array<{
+    title: string;
+    body: string;
+  }> | null;
+  principles: Array<{
+    primaryMedia: {
+      mediaType: "image" | "video";
+      imageUrl: string | null;
+      imageAlt: string | null;
+      videoUrl: string | null;
+      videoThumbnailUrl: string | null;
+      videoTitle: string | null;
+    };
+    story: {
+      media: {
+        mediaType: "image" | "video";
+        imageUrl: string | null;
+        imageAlt: string | null;
+        videoUrl: string | null;
+        videoThumbnailUrl: string | null;
+        videoTitle: string | null;
+      };
+      label: string;
+      statement: string;
+      description: string;
+      link: {
+        label: string;
+        href: string;
+      };
+    };
+  }>;
+  callToAction: {
+    title: string;
+    description: string;
+    label: string;
+    href: string;
+    backgroundUrl: string | null;
+    backgroundAlt: string | null;
+    insetUrl: string | null;
+    insetAlt: string | null;
+  };
+} | null;
+
 // Source: ../web/src/sanity/queries/projects.ts
 // Variable: WORK_PROJECTS_QUERY
 // Query: *[_type == "project" && defined(slug.current)]  | order(_createdAt asc, title asc){      _id,  title,  "slug": slug.current,  location,  status,  description,  completionYear,  "topology": topology->{    _id,    title,    "slug": slug.current  },  heroMedia{    mediaType,    image{asset, alt},    video{      url,      title,      thumbnail{asset, alt}    }  }  }
@@ -577,14 +640,49 @@ export type WORK_PROJECT_SLUGS_QUERY_RESULT = Array<{
 // Query: *[_type == "project" && featured == true && defined(slug.current)]  | order(_createdAt asc, title asc){      _id,  title,  "slug": slug.current,  location,  status,  description,  completionYear,  "topology": topology->{    _id,    title,    "slug": slug.current  },  heroMedia{    mediaType,    image{asset, alt},    video{      url,      title,      thumbnail{asset, alt}    }  }  }
 export type HOME_FEATURED_PROJECTS_QUERY_RESULT = Array<never>;
 
+// Source: ../web/src/sanity/queries/team.ts
+// Variable: TEAM_MEMBERS_QUERY
+// Query: *[_type == "teamMember" && visibility == "visible"]  | order(order asc) {    _id,    firstName,    surname,    membershipStatus,    role,    "portrait": portrait.asset.asset->url,    "biography": pt::text(biography)  }
+export type TEAM_MEMBERS_QUERY_RESULT = Array<{
+  _id: string;
+  firstName: null;
+  surname: null;
+  membershipStatus: "current" | "former";
+  role: string | null;
+  portrait: string | null;
+  biography: string;
+}>;
+
+// Source: ../web/src/sanity/queries/team.ts
+// Variable: TEAM_PAGE_QUERY
+// Query: *[_type == "teamPage"][0] {    title,    "heroUrl": hero.image.asset.asset->url,    "heroAlt": hero.image.alt,    callToAction {      title,      description,      label,      href,      "backgroundUrl": backgroundMedia.image.asset.asset->url,      "backgroundAlt": backgroundMedia.image.alt,      "insetUrl": insetMedia.image.asset.asset->url,      "insetAlt": insetMedia.image.alt    }  }
+export type TEAM_PAGE_QUERY_RESULT = {
+  title: string;
+  heroUrl: string | null;
+  heroAlt: string | null;
+  callToAction: {
+    title: string;
+    description: string;
+    label: string;
+    href: string;
+    backgroundUrl: string | null;
+    backgroundAlt: string | null;
+    insetUrl: string | null;
+    insetAlt: string | null;
+  };
+} | null;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
+    '\n  *[_type == "aboutPage"][0] {\n    "hero": {\n      "mediaType": hero.mediaType,\n      "imageUrl": hero.image.asset.asset->url,\n      "imageAlt": hero.image.alt,\n      "videoUrl": hero.video.url,\n      "videoThumbnailUrl": hero.video.thumbnail.asset.asset->url,\n      "videoTitle": hero.video.title\n    },\n    aboutTitle,\n    "introduction": pt::text(introduction), \n    resources[] {\n      _key,\n      title,\n      "isExpandable": coalesce(isExpandable, true),\n      "body": pt::text(body)\n    },\n    beliefs[] {\n      title,\n      "body": pt::text(body)\n    },\n    principles[] {\n      "primaryMedia": {\n        "mediaType": primaryMedia.mediaType,\n        "imageUrl": primaryMedia.image.asset.asset->url,\n        "imageAlt": primaryMedia.image.alt,\n        "videoUrl": primaryMedia.video.url,\n        "videoThumbnailUrl": primaryMedia.video.thumbnail.asset.asset->url,\n        "videoTitle": primaryMedia.video.title\n      },\n      story {\n        "media": {\n          "mediaType": media.mediaType,\n          "imageUrl": media.image.asset.asset->url,\n          "imageAlt": media.image.alt,\n          "videoUrl": media.video.url,\n          "videoThumbnailUrl": media.video.thumbnail.asset.asset->url,\n          "videoTitle": media.video.title\n        },\n        label,\n        statement,\n        description,\n        link {\n          label,\n          href\n        }\n      }\n    },\n    callToAction {\n      title,\n      description,\n      label,\n      href,\n      "backgroundUrl": backgroundMedia.image.asset.asset->url,\n      "backgroundAlt": backgroundMedia.image.alt,\n      "insetUrl": insetMedia.image.asset.asset->url,\n      "insetAlt": insetMedia.image.alt\n    }\n  }\n': ABOUT_PAGE_QUERY_RESULT;
     '\n  *[_type == "project" && defined(slug.current)]\n  | order(_createdAt asc, title asc){\n    \n  _id,\n  title,\n  "slug": slug.current,\n  location,\n  status,\n  description,\n  completionYear,\n  "topology": topology->{\n    _id,\n    title,\n    "slug": slug.current\n  },\n  heroMedia{\n    mediaType,\n    image{asset, alt},\n    video{\n      url,\n      title,\n      thumbnail{asset, alt}\n    }\n  }\n\n  }\n': WORK_PROJECTS_QUERY_RESULT;
     '\n  *[_type == "project" && slug.current == $slug][0]{\n    \n  _id,\n  title,\n  "slug": slug.current,\n  location,\n  status,\n  description,\n  completionYear,\n  "topology": topology->{\n    _id,\n    title,\n    "slug": slug.current\n  },\n  heroMedia{\n    mediaType,\n    image{asset, alt},\n    video{\n      url,\n      title,\n      thumbnail{asset, alt}\n    }\n  }\n,\n    plans[]{\n      _key,\n      _type,\n      asset,\n      alt,\n      url,\n      title,\n      thumbnail{asset, alt}\n    },\n    renders[]{\n      _key,\n      _type,\n      asset,\n      alt,\n      url,\n      title,\n      thumbnail{asset, alt}\n    },\n    "media": coalesce(media, gallery, [])[]{\n      _key,\n      _type,\n      asset,\n      alt,\n      url,\n      title,\n      thumbnail{asset, alt}\n    }\n  }\n': WORK_PROJECT_QUERY_RESULT;
     '\n  *[_type == "project" && slug.current == $slug][0]{\n    title,\n    description\n  }\n': WORK_PROJECT_METADATA_QUERY_RESULT;
     '\n  *[_type == "project" && defined(slug.current)]{\n    "slug": slug.current\n  }\n': WORK_PROJECT_SLUGS_QUERY_RESULT;
     '\n  *[_type == "project" && featured == true && defined(slug.current)]\n  | order(_createdAt asc, title asc){\n    \n  _id,\n  title,\n  "slug": slug.current,\n  location,\n  status,\n  description,\n  completionYear,\n  "topology": topology->{\n    _id,\n    title,\n    "slug": slug.current\n  },\n  heroMedia{\n    mediaType,\n    image{asset, alt},\n    video{\n      url,\n      title,\n      thumbnail{asset, alt}\n    }\n  }\n\n  }\n': HOME_FEATURED_PROJECTS_QUERY_RESULT;
+    '\n  *[_type == "teamMember" && visibility == "visible"]\n  | order(order asc) {\n    _id,\n    firstName,\n    surname,\n    membershipStatus,\n    role,\n    "portrait": portrait.asset.asset->url,\n    "biography": pt::text(biography)\n  }\n': TEAM_MEMBERS_QUERY_RESULT;
+    '\n  *[_type == "teamPage"][0] {\n    title,\n    "heroUrl": hero.image.asset.asset->url,\n    "heroAlt": hero.image.alt,\n    callToAction {\n      title,\n      description,\n      label,\n      href,\n      "backgroundUrl": backgroundMedia.image.asset.asset->url,\n      "backgroundAlt": backgroundMedia.image.alt,\n      "insetUrl": insetMedia.image.asset.asset->url,\n      "insetAlt": insetMedia.image.alt\n    }\n  }\n': TEAM_PAGE_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

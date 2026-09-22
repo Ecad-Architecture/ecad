@@ -47,6 +47,13 @@ export const aboutPage = defineType({
           type: 'object',
           fields: [
             defineField({name: 'title', type: 'string', validation: (rule) => rule.required()}),
+            defineField({
+              name: 'isExpandable',
+              title: 'Enable expandable content',
+              type: 'boolean',
+              description: 'Show the “+” control and allow visitors to expand this resource.',
+              initialValue: true,
+            }),
             defineField({name: 'body', type: 'richText', validation: (rule) => rule.required()}),
           ],
           preview: {select: {title: 'title'}},

@@ -16,8 +16,10 @@ export interface AboutPageData {
   aboutTitle: string;
   introduction: string;
   resources: Array<{
+    key: string;
     title: string;
     body: string;
+    isExpandable: boolean;
   }>;
   beliefs: Array<{
     title: string;
@@ -61,7 +63,12 @@ interface RawAboutPageData {
   hero?: RawMediaBlock | null;
   aboutTitle?: string | null;
   introduction?: string | null;
-  resources?: Array<{ title?: string | null; body?: string | null }> | null;
+  resources?: Array<{
+    _key?: string | null;
+    title?: string | null;
+    body?: string | null;
+    isExpandable?: boolean | null;
+  }> | null;
   beliefs?: Array<{ title?: string | null; body?: string | null }> | null;
   principles?: Array<{
     primaryMedia?: RawMediaBlock | null;
@@ -107,8 +114,10 @@ export const getAboutPageData = cache(async (): Promise<AboutPageData> => {
     aboutTitle: data?.aboutTitle || "",
     introduction: data?.introduction || "",
     resources: (data?.resources || []).map((r) => ({
+      key: r._key || r.title || "resource",
       title: r.title || "",
       body: r.body || "",
+      isExpandable: r.isExpandable ?? true,
     })),
     beliefs: (data?.beliefs || []).map((b) => ({
       title: b.title || "",
