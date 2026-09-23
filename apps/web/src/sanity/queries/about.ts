@@ -15,7 +15,6 @@ export const ABOUT_PAGE_QUERY = defineQuery(/* groq */ `
     resources[] {
       _key,
       title,
-      isExpandable,
       "body": pt::text(body)
     },
     beliefs[] {
