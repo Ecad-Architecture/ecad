@@ -1,6 +1,21 @@
 import {defineField, defineType} from 'sanity'
 import {UserIcon} from '@sanity/icons/User'
 
+const MAX_BIOGRAPHY_WORDS = 30
+
+type PortableTextBlock = {
+  children?: Array<{text?: string}>
+}
+
+const countWords = (blocks: PortableTextBlock[] = []) => {
+  const text = blocks
+    .flatMap((block) => block.children ?? [])
+    .map((child) => child.text ?? '')
+    .join(' ')
+
+  return text.match(/[\p{L}\p{N}]+(?:[\u2019'][\p{L}\p{N}]+)*/gu)?.length ?? 0
+}
+
 export const teamMember = defineType({
   name: 'teamMember',
   title: 'Team member',
@@ -81,14 +96,23 @@ export const teamMember = defineType({
       title: 'Profile / biography',
       type: 'richText',
       group: 'profile',
-      description: 'The short profile shown when a visitor opens a current team member’s card.',
+      description:
+        'The short profile shown when a visitor opens a current team member’s card. Maximum 30 words.',
       hidden: ({document}) => document?.membershipStatus === 'former',
       validation: (rule) =>
-        rule.custom((biography, context) =>
-          context.document?.membershipStatus === 'current' && !biography
-            ? 'Biography is required for current team members'
-            : true,
-        ),
+        rule.custom((biography, context) => {
+          const blocks = Array.isArray(biography) ? (biography as PortableTextBlock[]) : []
+
+          if (context.document?.membershipStatus === 'current' && blocks.length === 0) {
+            return 'Biography is required for current team members'
+          }
+
+          const wordCount = countWords(blocks)
+
+          return wordCount > MAX_BIOGRAPHY_WORDS
+            ? `Biography must be ${MAX_BIOGRAPHY_WORDS} words or fewer (currently ${wordCount})`
+            : true
+        }),
     }),
     defineField({
       name: 'visibility',
@@ -129,9 +153,7 @@ export const teamMember = defineType({
     prepare: ({firstName, surname, role, status, media}) => ({
       title: `${firstName || ''} ${surname || ''}`.trim(),
       subtitle:
-        status === 'former'
-          ? 'Former team member'
-          : `${role || 'Role not set'} · Current team`,
+        status === 'former' ? 'Former team member' : `${role || 'Role not set'} · Current team`,
       media,
     }),
   },
