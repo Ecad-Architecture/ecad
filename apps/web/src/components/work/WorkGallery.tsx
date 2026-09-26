@@ -17,6 +17,7 @@ import {
 } from "react";
 
 import { useProjectTransition } from "./ProjectTransitionProvider";
+import { getPaginationItems } from "./pagination";
 import type { WorkProject } from "./types";
 
 type ActiveCategory = string;
@@ -414,8 +415,16 @@ function WorkPagination({
       className="wide-screen-gutter flex min-h-36 items-center justify-end px-5 md:px-8 lg:min-h-60 lg:items-start lg:px-[6.8vw] lg:pt-6"
     >
       <div className="flex items-center gap-5 md:gap-7">
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-          (page) => (
+        {getPaginationItems(currentPage, totalPages).map(
+          (page) => typeof page === "string" ? (
+            <span
+              key={page}
+              aria-hidden="true"
+              className="wide-screen-body-sm py-2 text-[10px] text-white/65 md:text-[12px]"
+            >
+              …
+            </span>
+          ) : (
             <button
               key={page}
               type="button"

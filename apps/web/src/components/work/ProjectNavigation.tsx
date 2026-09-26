@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { type MouseEvent, useRef, useState } from "react";
 
 import { useProjectTransition } from "./ProjectTransitionProvider";
+import { getPaginationItems } from "./pagination";
 import type { WorkProject } from "./types";
 
 interface ProjectNavigationProps {
@@ -123,8 +124,16 @@ export default function ProjectNavigation({
           aria-label="Related projects pagination"
           className="mt-8 flex items-center justify-end gap-5 md:gap-5"
         >
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-            (page) => (
+          {getPaginationItems(currentPage, totalPages).map(
+            (page) => typeof page === "string" ? (
+              <span
+                key={page}
+                aria-hidden="true"
+                className="wide-screen-body-sm py-2 text-[12px] text-black/45"
+              >
+                …
+              </span>
+            ) : (
               <button
                 key={page}
                 type="button"
