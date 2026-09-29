@@ -10,6 +10,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // cpanel redirect config
+  async redirects() {
+    return [
+      {
+        source: "/cpanel",
+        destination: "http://176.74.16.235:2038",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
