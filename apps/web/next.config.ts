@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/cpanel",
-        destination: "http://176.74.16.235:2038",
+        destination: "http://176.74.16.235:2083",
         permanent: false,
       },
     ];
