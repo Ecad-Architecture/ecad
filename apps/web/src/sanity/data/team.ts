@@ -27,7 +27,112 @@ export interface FormerTeamMember {
   _id: string;
   firstName: string;
   surname: string;
+  isHighlighted: boolean;
+  title?: string;
 }
+
+const formerMemberNames = [
+  ["Ade", "Laoye", true, "Managing Partner"],
+  ["Wole", "Goyea", true, "International Consultant"],
+  ["Ade", "Obasa", false],
+  ["Muyiwa", "Joshua", false],
+  ["Kunle", "Oke", false],
+  ["Christy", "Chinwe", true],
+  ["Ronke", "Salami", false],
+  ["Bola", "Ladokun", false],
+  ["Kayode", "Bamisile", false],
+  ["Abiodun", "Akanni", true, "Partner"],
+  ["Funmi", "Fajolu", false],
+  ["Bidemi", "Olawoyin", false],
+  ["Ayo", "Ajayi", false],
+  ["Teni", "Shodipe", false],
+  ["Damilola", "Adekoya", false],
+  ["Funke", "Akintemi", true, "Associate"],
+  ["Jide", "Onanuga", false],
+  ["Vivian", "Onuoha", false],
+  ["Peter", "Olayori", true],
+  ["Efiok", "Ekwere", true],
+  ["Bukola", "Ogunnaya", false, "Accountant"],
+  ["Dimeji", "Williams", false],
+  ["Claude", "Opara", false],
+  ["Segun", "Oluwaleti", false],
+  ["Ronke", "Opoola", false],
+  ["Azuka", "Opute", false, "Associate"],
+  ["Olaniyi", "Gbolahan", false],
+  ["Fisade", "Akinyemi", false],
+  ["Rotimi", "Ajjola", false],
+  ["Obinna", "Ezeobika", false],
+  ["Oghogho", "Kamah", false],
+  ["Adeleke", "Adekanbi", true, "Partner"],
+  ["Yusuf", "Salako", false],
+  ["Dolapo", "Falola", false],
+  ["Moniba", "Omagbemi", false],
+  ["Olusegun", "Omodele", false],
+  ["Adetokunbo", "Towobola", false],
+  ["Femi", "Dada", false],
+  ["Nneka", "Igboh", false],
+  ["Hakeem", "Kekere-Ekun", false],
+  ["Taiwo", "Allison", false],
+  ["Adesola", "Adeyemi", false],
+  ["Adejoke", "Adewuyi", true, "Associate"],
+  ["Demola", "Fadeyibi", false],
+  ["Olamide", "Mofe", false],
+  ["Tayo", "Omosanya", true, "Associate"],
+  ["Ibiyemi", "Unuigbe", false],
+  ["Oiza", "Osho", false],
+  ["Patrick", "Monye", true, "Associate"],
+  ["Damilola", "Fasoranti", false],
+  ["Mayowa", "Ogunlesi", false],
+  ["Tomi", "Akanni", false],
+  ["Joy", "Boeligha", false],
+  ["Taiwo", "Oyelayo", true, "Accountant"],
+  ["Taiwo", "Aiyepe", false],
+  ["Dedunni", "Roberts", false],
+  ["Chris", "Chime", false],
+  ["Morenike", "Young", false],
+  ["Nwamaka", "Onyenokwe", false],
+  ["Busola", "Ogunbowale", false],
+  ["Bolawole", "Andu", false],
+  ["Modupe", "Ogunsakin", false],
+  ["Asiriuwa", "Uwugibe", false],
+  ["Oyeloyin", "Oyewumi", false],
+  ["Iyabo", "Olumofe", true],
+  ["Kolufunsho", "Ajala", false],
+  ["Ekom", "Ebong", false],
+  ["Eniayo", "Oyebolu", false],
+  ["Aikenosi", "Akhigbe", false],
+  ["Paul", "Adesina", false],
+  ["Keren", "Anjorin", false],
+  ["Oladipo", "Shorinola", false],
+  ["Wunmi", "Williams", true],
+  ["Pelumi", "Akinpelu", false],
+  ["Tamilore", "Adelabu", false],
+  ["Anuoluwa", "Teriba", false],
+  ["Folarin", "Ayoola", false],
+  ["Odilile", "Lawal", true],
+  ["Marvelous", "Onyemuwa", true],
+  ["John", "Akintunde Taiwo", true],
+  ["Femi", "Aduroja", true],
+  ["Adeoluwa", "Adedipe", true],
+  ["Victor", "Kolade", true],
+  ["Korede", "Malizu", true],
+  ["Kingsley", "Ekezie", true],
+  ["Israel", "Okon", true],
+  ["Debo", "Laoye", false],
+  ["Comfort", "Adu", true],
+  ["Iletutu", "Awosika", true],
+  ["Ayomide", "Adeoti", false],
+] as const;
+
+const formerMembersFromImage: FormerTeamMember[] = formerMemberNames.map(
+  ([firstName, surname, isHighlighted, title], index) => ({
+    _id: `former-image-${index}`,
+    firstName,
+    surname,
+    isHighlighted,
+    title,
+  }),
+);
 
 export const getTeamMembers = cache(async () => {
   const members = await sanityFetch<SanityTeamMemberRecord[]>({
@@ -36,16 +141,10 @@ export const getTeamMembers = cache(async () => {
   });
 
   const currentMembers: CurrentTeamMember[] = [];
-  const formerMembers: FormerTeamMember[] = [];
+  const formerMembers = formerMembersFromImage;
 
   for (const member of members) {
-    if (member.membershipStatus === "former") {
-      formerMembers.push({
-        _id: member._id,
-        firstName: member.firstName?.trim() || "",
-        surname: member.surname?.trim() || "",
-      });
-    } else {
+    if (member.membershipStatus !== "former") {
       currentMembers.push({
         _id: member._id,
         firstName: member.firstName?.trim() || "",
