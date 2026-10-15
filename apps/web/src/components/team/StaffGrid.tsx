@@ -351,16 +351,17 @@ export default function StaffGrid({
               >
                 +
               </span>
-              <span>Alumni</span>
+              <span>STAFF & ALUMNI</span>
             </summary>
 
             <ul className="mt-[clamp(1.5rem,3vw,2.5rem)] list-none grid grid-cols-2 gap-x-5 gap-y-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {formerMembers.map((member) => (
                 <li
                   key={member._id}
-                  className={`${staffNameClassName} text-white/90`}
+                  className={`${staffNameClassName} ${member.isHighlighted ? "text-brand-yellow" : "text-white/90"}`}
                 >
                   {member.firstName} {member.surname}
+                  {member.title ? ` | ${member.title}` : ""}
                 </li>
               ))}
             </ul>
