@@ -156,6 +156,12 @@ export default function StaffGrid({
   const mobileCloseButtonRef = useRef<HTMLButtonElement>(null);
   const [selectedProfile, setSelectedProfile] =
     useState<SelectedProfile | null>(null);
+  const formerMemberRows = {
+    base: Math.ceil(formerMembers.length / 2),
+    sm: Math.ceil(formerMembers.length / 3),
+    md: Math.ceil(formerMembers.length / 4),
+    lg: Math.ceil(formerMembers.length / 6),
+  };
 
   useEffect(() => {
     if (!selectedProfile) {
@@ -354,7 +360,15 @@ export default function StaffGrid({
               <span>STAFF & ALUMNI</span>
             </summary>
 
-            <ul className="mt-[clamp(1.5rem,3vw,2.5rem)] list-none grid grid-cols-2 gap-x-5 gap-y-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            <ul
+              className="mt-[clamp(1.5rem,3vw,2.5rem)] list-none grid grid-cols-2 grid-flow-col grid-rows-[var(--former-member-rows-base)] gap-x-5 gap-y-4 sm:grid-cols-3 sm:grid-rows-[var(--former-member-rows-sm)] md:grid-cols-4 md:grid-rows-[var(--former-member-rows-md)] lg:grid-cols-6 lg:grid-rows-[var(--former-member-rows-lg)]"
+              style={{
+                "--former-member-rows-base": `repeat(${formerMemberRows.base}, minmax(0, auto))`,
+                "--former-member-rows-sm": `repeat(${formerMemberRows.sm}, minmax(0, auto))`,
+                "--former-member-rows-md": `repeat(${formerMemberRows.md}, minmax(0, auto))`,
+                "--former-member-rows-lg": `repeat(${formerMemberRows.lg}, minmax(0, auto))`,
+              } as React.CSSProperties}
+            >
               {formerMembers.map((member) => (
                 <li
                   key={member._id}
