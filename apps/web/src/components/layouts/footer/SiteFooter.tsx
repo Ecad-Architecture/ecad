@@ -61,12 +61,12 @@ export default function SiteFooter() {
           }`}
         >
           <p className="shrink-0">&copy; {currentYear} ECAD DESIGN ARCHITECTS</p>
-          <Link
+          {/* <Link
             href="/privacy-policy"
             className="transition-opacity hover:opacity-55 focus-visible:rounded-sm focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-current"
           >
             Privacy Policy
-          </Link>
+          </Link> */}
         </div>
 
         <div className="wide-screen-footer-actions wide-screen-label order-1 flex flex-col items-start gap-4 text-[12px] md:order-2 md:items-end">
